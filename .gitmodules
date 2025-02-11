@@ -1,0 +1,4 @@
+[submodule "yolov11_train"]
+	path = yolov11_train
+	url = git@github.com:GuardHer/yolov11_train.git
+	branch = master
