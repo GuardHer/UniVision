@@ -2,3 +2,9 @@
 	path = yolov11_train
 	url = git@github.com:GuardHer/yolov11_train.git
 	branch = master
+[submodule "3rdparty/TensorRT-YOLO"]
+	path = 3rdparty/TensorRT-YOLO
+	url = https://github.com/laugh12321/TensorRT-YOLO.git
+[submodule "3rdparty/ElaWidgetTools"]
+	path = 3rdparty/ElaWidgetTools
+	url = https://github.com/Liniyous/ElaWidgetTools.git
