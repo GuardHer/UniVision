@@ -70,23 +70,23 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Framework\ElaWidgetTools\src\include\;$(SolutionDir)Framework\Framework\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\spdlog\include\;$(SolutionDir)3rdparty\TensorRT-YOLO\;$(SolutionDir)3rdparty\TensorRT\include\;$(SolutionDir)3rdparty\opencv\include\;$(SolutionDir)3rdparty\CUDA\include\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\include\</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ElaWidgetTools.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\TensorRT-YOLO\lib\release\;$(SolutionDir)3rdparty\TensorRT\lib\;$(SolutionDir)3rdparty\opencv\x64\vc17\lib\;$(SolutionDir)3rdparty\CUDA\lib\x64\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\lib\;$(SolutionDir)bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ElaWidgetTools.lib;deploy.lib;opencv_world4100.lib;opencv_img_hash4100.lib;nvinfer_10.lib;nvinfer_dispatch_10.lib;nvinfer_lean_10.lib;nvinfer_plugin_10.lib;nvinfer_vc_plugin_10.lib;nvonnxparser_10.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Framework\ElaWidgetTools\src\include\;$(SolutionDir)Framework\Framework\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\spdlog\include\;$(SolutionDir)3rdparty\TensorRT-YOLO\;$(SolutionDir)3rdparty\TensorRT\include\;$(SolutionDir)3rdparty\opencv\include\;$(SolutionDir)3rdparty\CUDA\include\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\include\</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ElaWidgetToolsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\TensorRT-YOLO\lib\debug\;$(SolutionDir)3rdparty\TensorRT\lib\;$(SolutionDir)3rdparty\opencv\x64\vc17\lib\;$(SolutionDir)3rdparty\CUDA\lib\x64\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\lib\;$(SolutionDir)bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ElaWidgetToolsd.lib;deploy.lib;opencv_world4100d.lib;opencv_img_hash4100d.lib;nvinfer_10.lib;nvinfer_dispatch_10.lib;nvinfer_lean_10.lib;nvinfer_plugin_10.lib;nvinfer_vc_plugin_10.lib;nvonnxparser_10.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -118,7 +118,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <QtRcc Include="..\3rdparty\include\ElaWidgetTools\ElaWidgetTools.qrc" />
     <QtRcc Include="UniVision.qrc" />
     <QtMoc Include="UniVision.h" />
     <ClCompile Include="UniVision.cpp" />

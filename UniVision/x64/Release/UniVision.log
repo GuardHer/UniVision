@@ -1,8 +1,0 @@
-﻿   Qt/MSBuild: 3.3.0.13
-  Reading Qt configuration (D:/Environment/Qt5.15.2/bin/qmake)
-   Qt: 5.15.2
-  正在生成代码
-  Previous IPDB not found, fall back to full compilation.
-  All 20 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
-  已完成代码的生成
-  UniVision.vcxproj -> D:\Projects\UniVision\bin\UniVision.exe

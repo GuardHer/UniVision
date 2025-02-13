@@ -32,9 +32,6 @@
     <ClCompile Include="UniVision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <QtRcc Include="..\3rdparty\include\ElaWidgetTools\ElaWidgetTools.qrc">
-      <Filter>Form Files</Filter>
-    </QtRcc>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
