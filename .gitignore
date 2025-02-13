@@ -34,3 +34,5 @@
 # custom
 .vs
 CUDA
+x64
+build

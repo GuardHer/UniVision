@@ -7,11 +7,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniVision", "UniVision\UniV
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{C0B1A6EA-7D04-41F5-A9AF-692A624A4BC2}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ElaWidgetTools", "Framework\ElaWidgetTools\build\src\ElaWidgetTools.vcxproj", "{F7DA9789-CAA1-35EB-8423-8ADA6EEFBBA2}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Framework", "Framework\Framework\Framework.vcxproj", "{81F3576A-FB04-43EF-9991-3BA7B28A9BA1}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ela", "Ela", "{8AFFBA83-362E-49EE-87C4-3EF126A6FC50}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ElaWidgetTools", "3rdparty\ElaWidgetTools\build\ElaWidgetTools\ElaWidgetTools.vcxproj", "{9FDA30B7-68E9-32CC-AAE7-C971D0EE9F1A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ElaWidgetToolsExample", "3rdparty\ElaWidgetTools\build\ElaWidgetToolsExample\ElaWidgetToolsExample.vcxproj", "{B9E01574-FA59-3DA2-8F17-0BAF4FED7FAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,21 +23,21 @@ Global
 		{EDB1D453-93B7-4231-859D-3D701343A777}.Debug|x64.Build.0 = Debug|x64
 		{EDB1D453-93B7-4231-859D-3D701343A777}.Release|x64.ActiveCfg = Release|x64
 		{EDB1D453-93B7-4231-859D-3D701343A777}.Release|x64.Build.0 = Release|x64
-		{F7DA9789-CAA1-35EB-8423-8ADA6EEFBBA2}.Debug|x64.ActiveCfg = Debug|x64
-		{F7DA9789-CAA1-35EB-8423-8ADA6EEFBBA2}.Debug|x64.Build.0 = Debug|x64
-		{F7DA9789-CAA1-35EB-8423-8ADA6EEFBBA2}.Release|x64.ActiveCfg = Release|x64
-		{F7DA9789-CAA1-35EB-8423-8ADA6EEFBBA2}.Release|x64.Build.0 = Release|x64
-		{81F3576A-FB04-43EF-9991-3BA7B28A9BA1}.Debug|x64.ActiveCfg = Debug|x64
-		{81F3576A-FB04-43EF-9991-3BA7B28A9BA1}.Debug|x64.Build.0 = Debug|x64
-		{81F3576A-FB04-43EF-9991-3BA7B28A9BA1}.Release|x64.ActiveCfg = Release|x64
-		{81F3576A-FB04-43EF-9991-3BA7B28A9BA1}.Release|x64.Build.0 = Release|x64
+		{9FDA30B7-68E9-32CC-AAE7-C971D0EE9F1A}.Debug|x64.ActiveCfg = Debug|x64
+		{9FDA30B7-68E9-32CC-AAE7-C971D0EE9F1A}.Debug|x64.Build.0 = Debug|x64
+		{9FDA30B7-68E9-32CC-AAE7-C971D0EE9F1A}.Release|x64.ActiveCfg = Release|x64
+		{9FDA30B7-68E9-32CC-AAE7-C971D0EE9F1A}.Release|x64.Build.0 = Release|x64
+		{B9E01574-FA59-3DA2-8F17-0BAF4FED7FAB}.Debug|x64.ActiveCfg = Debug|x64
+		{B9E01574-FA59-3DA2-8F17-0BAF4FED7FAB}.Debug|x64.Build.0 = Debug|x64
+		{B9E01574-FA59-3DA2-8F17-0BAF4FED7FAB}.Release|x64.ActiveCfg = Release|x64
+		{B9E01574-FA59-3DA2-8F17-0BAF4FED7FAB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{F7DA9789-CAA1-35EB-8423-8ADA6EEFBBA2} = {8AFFBA83-362E-49EE-87C4-3EF126A6FC50}
-		{81F3576A-FB04-43EF-9991-3BA7B28A9BA1} = {C0B1A6EA-7D04-41F5-A9AF-692A624A4BC2}
 		{8AFFBA83-362E-49EE-87C4-3EF126A6FC50} = {C0B1A6EA-7D04-41F5-A9AF-692A624A4BC2}
+		{9FDA30B7-68E9-32CC-AAE7-C971D0EE9F1A} = {8AFFBA83-362E-49EE-87C4-3EF126A6FC50}
+		{B9E01574-FA59-3DA2-8F17-0BAF4FED7FAB} = {8AFFBA83-362E-49EE-87C4-3EF126A6FC50}
 	EndGlobalSection
 EndGlobal
