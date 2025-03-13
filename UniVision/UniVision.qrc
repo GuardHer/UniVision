@@ -1,4 +1,8 @@
 <RCC>
-    <qresource prefix="UniVision">
+    <qresource prefix="/">
+        <file>resource/icon/Run_48.png</file>
+        <file>resource/icon/Run_64.png</file>
+        <file>resource/icon/Stop_48.png</file>
+        <file>resource/icon/Stop_64.png</file>
     </qresource>
 </RCC>

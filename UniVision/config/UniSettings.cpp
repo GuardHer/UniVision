@@ -3,7 +3,7 @@
 #include <QSettings>
 #include <QApplication>
 
-
+std::mutex UniSettings::_mutex;
 UniSettings* UniSettings::_instance = nullptr;
 
 UniSettings::UniSettings(QObject* parent)
@@ -19,7 +19,13 @@ UniSettings::UniSettings(QObject* parent)
 
 UniSettings* UniSettings::instance()
 {
-	return _instance == nullptr ? _instance = new UniSettings() : _instance;
+	if (_instance == nullptr) {
+		std::lock_guard<std::mutex> lock(_mutex);
+		if (_instance == nullptr) {
+			_instance = new UniSettings();
+		}
+	}
+	return _instance;
 }
 
 QSettings* UniSettings::settings() const

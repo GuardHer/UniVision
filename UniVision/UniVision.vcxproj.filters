@@ -21,6 +21,30 @@
       <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
       <Extensions>ts</Extensions>
     </Filter>
+    <Filter Include="Extended controls">
+      <UniqueIdentifier>{e028f691-597b-4401-b84f-aefc11954c24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="page">
+      <UniqueIdentifier>{60613907-8595-42e6-9961-c70b77d516b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="manager">
+      <UniqueIdentifier>{c3ac0356-65b2-4a7b-9b61-8003c4807e08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="conf">
+      <UniqueIdentifier>{04c4378b-7aa3-4de6-84ae-b0bf5cc2f173}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Test">
+      <UniqueIdentifier>{76ceda10-c28a-4f72-854d-a5259731b259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="device">
+      <UniqueIdentifier>{4f9edc42-503e-47ce-b6eb-b00dc3d9260d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="device\camera">
+      <UniqueIdentifier>{dc785ac5-2d00-4c59-b392-1a46d301b899}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Algorithm">
+      <UniqueIdentifier>{13c28b6a-3535-42e2-8d56-eefebec5c5a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="UniVision.qrc">
@@ -37,5 +61,90 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="extended\UniElaToggleButton.cpp">
+      <Filter>Extended controls</Filter>
+    </ClCompile>
+    <ClCompile Include="extended\UniElaWidget.cpp">
+      <Filter>Extended controls</Filter>
+    </ClCompile>
+    <ClCompile Include="manager\AppStateManager.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
+    <ClCompile Include="page\UniMasterPage.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
+    <ClCompile Include="extended\UniImageViewFrame.cpp">
+      <Filter>Extended controls</Filter>
+    </ClCompile>
+    <ClCompile Include="config\UniSettings.cpp">
+      <Filter>conf</Filter>
+    </ClCompile>
+    <ClCompile Include="extended\UniElaFrame.cpp">
+      <Filter>Extended controls</Filter>
+    </ClCompile>
+    <ClCompile Include="test\Test.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="device\camera\UniCameraBase.cpp">
+      <Filter>device\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="device\camera\UniSimCamera.cpp">
+      <Filter>device\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="manager\UniCameraManager.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
+    <ClCompile Include="test\TestAlgorithm.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\UniAlgorithm.cpp">
+      <Filter>Algorithm</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="extended\UniElaToggleButton.h">
+      <Filter>Extended controls</Filter>
+    </QtMoc>
+    <QtMoc Include="extended\UniElaWidget.h">
+      <Filter>Extended controls</Filter>
+    </QtMoc>
+    <QtMoc Include="manager\AppStateManager.h">
+      <Filter>manager</Filter>
+    </QtMoc>
+    <QtMoc Include="page\UniMasterPage.h">
+      <Filter>page</Filter>
+    </QtMoc>
+    <QtMoc Include="extended\UniImageViewFrame.h">
+      <Filter>Extended controls</Filter>
+    </QtMoc>
+    <QtMoc Include="config\UniSettings.h">
+      <Filter>conf</Filter>
+    </QtMoc>
+    <QtMoc Include="extended\UniElaFrame.h">
+      <Filter>Extended controls</Filter>
+    </QtMoc>
+    <QtMoc Include="device\camera\UniCameraBase.h">
+      <Filter>device\camera</Filter>
+    </QtMoc>
+    <QtMoc Include="device\camera\UniSimCamera.h">
+      <Filter>device\camera</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="config\UniAlgorithmConfig.h">
+      <Filter>conf</Filter>
+    </ClInclude>
+    <ClInclude Include="config\UniCameraConfig.h">
+      <Filter>conf</Filter>
+    </ClInclude>
+    <ClInclude Include="test\Test.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="manager\UniCameraManager.h">
+      <Filter>manager</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\UniAlgorithm.h">
+      <Filter>Algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

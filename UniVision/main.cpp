@@ -2,6 +2,8 @@
 #include <QtWidgets/QApplication>
 #include <ElaApplication.h>
 
+#include "test/Test.h"
+
 int main(int argc, char *argv[])
 {
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
@@ -15,6 +17,8 @@ int main(int argc, char *argv[])
 #endif
 #endif
 
+	//TestAll();
+    TestAlgorithm(argc, argv);
     QApplication a(argc, argv);
     eApp->init();
 

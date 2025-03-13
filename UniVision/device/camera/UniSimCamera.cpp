@@ -15,9 +15,11 @@ UniSimCamera::~UniSimCamera()
 	close();
 }
 
-void UniSimCamera::open()
+bool UniSimCamera::open()
 {
 	_isOpened = true;
+
+    return true;
 }
 
 void UniSimCamera::close()
@@ -25,9 +27,9 @@ void UniSimCamera::close()
 	_isOpened = false;
 }
 
-void UniSimCamera::startGrabbing()
+bool UniSimCamera::startGrabbing()
 {
-
+    return true;
 }
 
 void UniSimCamera::stopGrabbing()
@@ -50,6 +52,33 @@ void UniSimCamera::setTriggerSource(int source)
 int UniSimCamera::getTriggerSource()
 {
 	return 0;
+}
+
+void UniSimCamera::setGain(int gain)
+{
+}
+
+int UniSimCamera::getGain()
+{
+    return 0;
+}
+
+void UniSimCamera::setGamma(int gamma)
+{
+}
+
+int UniSimCamera::getGamma()
+{
+    return 0;
+}
+
+void UniSimCamera::setTriggerMode(bool isOn)
+{
+}
+
+bool UniSimCamera::getTriggerMode()
+{
+    return false;
 }
 
 void UniSimCamera::softwareTrigger()

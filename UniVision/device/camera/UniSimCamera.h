@@ -21,7 +21,7 @@ protected:
 	/// <summary>
 	/// open camera
 	/// </summary>
-	virtual void open() override;
+	virtual bool open() override;
 	/// <summary>
 	/// close camera
 	/// </summary>
@@ -29,7 +29,7 @@ protected:
 	/// <summary>
 	/// 开始采集
 	/// </summary>
-	virtual void startGrabbing() override;
+	virtual bool startGrabbing() override;
 	/// <summary>
 	/// 停止采集
 	/// </summary>
@@ -54,6 +54,36 @@ protected:
 	/// </summary>
 	/// <returns></returns>
 	virtual int getTriggerSource() override;
+	/// <summary>
+	/// 设置增益
+	/// </summary>
+	/// <param name="gain"></param>
+	virtual void setGain(int gain) override;
+	/// <summary>
+	/// 获取增益
+	/// </summary>
+	/// <returns></returns>
+	virtual int getGain() override;
+	/// <summary>
+	/// 设置伽马
+	/// </summary>
+	/// <param name="gamma"></param>
+	virtual void setGamma(int gamma) override;
+	/// <summary>
+	/// 获取伽马
+	/// </summary>
+	/// <returns></returns>
+	virtual int getGamma() override;
+	/// <summary>
+	/// 设置触发模式
+	/// </summary>
+	/// <param name="isOn"></param>
+	virtual void setTriggerMode(bool isOn) override;
+	/// <summary>
+	/// 获取触发模式
+	/// </summary>
+	/// <returns></returns>
+	virtual bool getTriggerMode() override;
 	/// <summary>
 	/// 软触发
 	/// </summary>

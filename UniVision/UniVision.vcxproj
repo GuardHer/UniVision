@@ -37,12 +37,12 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>Qt6.6.2</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;opengl;openglwidgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>Qt6.6.2</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;opengl;openglwidgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -70,34 +70,34 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\spdlog\include\;$(SolutionDir)3rdparty\TensorRT-YOLO\;$(SolutionDir)3rdparty\TensorRT\include\;$(SolutionDir)3rdparty\opencv\include\;$(SolutionDir)3rdparty\CUDA\include\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)3rdparty\spdlog\include\;$(SolutionDir)3rdparty\TensorRT-YOLO\;$(SolutionDir)3rdparty\TensorRT\include\;$(SolutionDir)3rdparty\opencv\include\;$(SolutionDir)3rdparty\CUDA\include\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\include\</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\TensorRT-YOLO\lib\release\;$(SolutionDir)3rdparty\TensorRT\lib\;$(SolutionDir)3rdparty\opencv\x64\vc17\lib\;$(SolutionDir)3rdparty\CUDA\lib\x64\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\lib\;$(SolutionDir)bin</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ElaWidgetTools.lib;deploy.lib;opencv_world4100.lib;opencv_img_hash4100.lib;nvinfer_10.lib;nvinfer_dispatch_10.lib;nvinfer_lean_10.lib;nvinfer_plugin_10.lib;nvinfer_vc_plugin_10.lib;nvonnxparser_10.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\TensorRT-YOLO\lib\plugin\;$(SolutionDir)3rdparty\TensorRT-YOLO\lib\;$(SolutionDir)3rdparty\TensorRT\lib\;$(SolutionDir)3rdparty\opencv\x64\vc17\lib\;$(SolutionDir)3rdparty\CUDA\lib\x64\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\lib\;$(SolutionDir)bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ElaWidgetTools.lib;deploy.lib;custom_plugins.lib;opencv_world4100.lib;opencv_img_hash4100.lib;nvinfer_10.lib;nvinfer_dispatch_10.lib;nvinfer_lean_10.lib;nvinfer_plugin_10.lib;nvinfer_vc_plugin_10.lib;nvonnxparser_10.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\spdlog\include\;$(SolutionDir)3rdparty\TensorRT-YOLO\;$(SolutionDir)3rdparty\TensorRT\include\;$(SolutionDir)3rdparty\opencv\include\;$(SolutionDir)3rdparty\CUDA\include\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)3rdparty\spdlog\include\;$(SolutionDir)3rdparty\TensorRT-YOLO\;$(SolutionDir)3rdparty\TensorRT\include\;$(SolutionDir)3rdparty\opencv\include\;$(SolutionDir)3rdparty\CUDA\include\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\include\</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\TensorRT-YOLO\lib\debug\;$(SolutionDir)3rdparty\TensorRT\lib\;$(SolutionDir)3rdparty\opencv\x64\vc17\lib\;$(SolutionDir)3rdparty\CUDA\lib\x64\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\lib\;$(SolutionDir)bin</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ElaWidgetToolsd.lib;deploy.lib;opencv_world4100d.lib;opencv_img_hash4100d.lib;nvinfer_10.lib;nvinfer_dispatch_10.lib;nvinfer_lean_10.lib;nvinfer_plugin_10.lib;nvinfer_vc_plugin_10.lib;nvonnxparser_10.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\TensorRT-YOLO\lib\plugin\;$(SolutionDir)3rdparty\TensorRT-YOLO\lib\;$(SolutionDir)3rdparty\TensorRT\lib\;$(SolutionDir)3rdparty\opencv\x64\vc17\lib\;$(SolutionDir)3rdparty\CUDA\lib\x64\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\lib\;$(SolutionDir)bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ElaWidgetToolsd.lib;deployd.lib;custom_pluginsd.lib;opencv_world4100d.lib;opencv_img_hash4100d.lib;nvinfer_10.lib;nvinfer_dispatch_10.lib;nvinfer_lean_10.lib;nvinfer_plugin_10.lib;nvinfer_vc_plugin_10.lib;nvonnxparser_10.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -105,13 +105,13 @@
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
@@ -120,8 +120,49 @@
   <ItemGroup>
     <QtRcc Include="UniVision.qrc" />
     <QtMoc Include="UniVision.h" />
+    <ClCompile Include="algorithm\UniAlgorithm.cpp" />
+    <ClCompile Include="config\UniSettings.cpp" />
+    <ClCompile Include="device\camera\UniCameraBase.cpp" />
+    <ClCompile Include="device\camera\UniSimCamera.cpp" />
+    <ClCompile Include="extended\UniElaFrame.cpp" />
+    <ClCompile Include="extended\UniElaToggleButton.cpp" />
+    <ClCompile Include="extended\UniElaWidget.cpp" />
+    <ClCompile Include="extended\UniImageViewFrame.cpp" />
+    <ClCompile Include="manager\AppStateManager.cpp" />
+    <ClCompile Include="manager\UniCameraManager.cpp" />
+    <ClCompile Include="page\UniMasterPage.cpp" />
+    <ClCompile Include="test\Test.cpp" />
+    <ClCompile Include="test\TestAlgorithm.cpp" />
     <ClCompile Include="UniVision.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="extended\UniElaToggleButton.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="extended\UniElaWidget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="manager\AppStateManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="page\UniMasterPage.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="extended\UniImageViewFrame.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="config\UniSettings.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="algorithm\UniAlgorithm.h" />
+    <ClInclude Include="config\UniAlgorithmConfig.h" />
+    <ClInclude Include="config\UniCameraConfig.h" />
+    <QtMoc Include="device\camera\UniCameraBase.h" />
+    <QtMoc Include="device\camera\UniSimCamera.h" />
+    <ClInclude Include="manager\UniCameraManager.h" />
+    <ClInclude Include="test\Test.h" />
+    <QtMoc Include="extended\UniElaFrame.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

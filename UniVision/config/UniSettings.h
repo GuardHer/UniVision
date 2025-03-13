@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <vector>
+#include <mutex>
 #include "config/UniCameraConfig.h"
 
 class QSettings;
@@ -47,6 +48,7 @@ private:
 protected:
 
 private:
+	static std::mutex _mutex;
 	static UniSettings* _instance;
 
 	QSettings* _settings = nullptr;

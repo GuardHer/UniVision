@@ -2,7 +2,7 @@
 
 #include <QObject>
 #include <atomic>
-
+#include <memory>
 #include <opencv2/opencv.hpp>
 
 #include "config/UniCameraConfig.h"
@@ -13,6 +13,9 @@ class UniCameraBase : public QObject
 	Q_OBJECT
 
 public:
+	using s_ptr = std::shared_ptr<UniCameraBase>;
+	using u_ptr = std::unique_ptr<UniCameraBase>;
+
 	using CameraCallback = std::function<void(const cv::Mat& srcImg, 
 		const std::string& imageMark, 
 		uint16_t cameraIndex, 
@@ -28,7 +31,7 @@ public:
 	/// <summary>
 	/// open camera
 	/// </summary>
-	virtual void open() = 0;
+	virtual bool open() = 0;
 
 	/// <summary>
 	/// close camera
@@ -38,7 +41,7 @@ public:
 	/// <summary>
 	/// 开始采集
 	/// </summary>
-	virtual void startGrabbing() = 0;
+	virtual bool startGrabbing() = 0;
 
 	/// <summary>
 	/// 停止采集
@@ -140,6 +143,18 @@ public:
 	/// 重置帧数
 	/// </summary>
 	void resetImageFrame() { _imageFrame = 0; }
+
+	/// <summary>
+	/// 获取相机IP
+	/// </summary>
+	/// <returns></returns>
+	std::string getCameraIpAddress() const { return _config._cameraIp; }
+
+	/// <summary>
+	/// 获取相机名称
+	/// </summary>
+	/// <returns></returns>
+	std::string getCameraName() const { return _config._cameraName; }
 
 protected:
 	QThread* _thread {nullptr};
