@@ -10,13 +10,6 @@ public:
 	UniSimCamera(const CameraConfig& config, QObject* parent = nullptr);
 	virtual ~UniSimCamera();
 
-public:
-	/// <summary>
-	/// 设置模拟相机采图路径
-	/// </summary>
-	/// <param name="path"></param>
-	void setImagePath(const std::string& path) { _imagePath = path; }
-
 protected:
 	/// <summary>
 	/// open camera
@@ -106,7 +99,6 @@ private:
 	void updateImagePaths(const std::set<std::string>& filter);
 
 private:
-	std::string _imagePath;                 // 图片目录路径
 	std::vector<std::string> _imagePaths;   // 缓存符合条件的文件路径
 	size_t _currentIndex = 0;               // 当前文件索引
 	std::set<std::string> _lastFilter;      // 上一次使用的文件过滤器

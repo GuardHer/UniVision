@@ -14,10 +14,10 @@ struct CameraConfig
 {
 	struct CameraLayout
 	{
-		uint16_t _row;
-		uint16_t _column;
-		uint16_t _rowSpan;
-		uint16_t _columnSpan;
+		uint16_t _row;        // 行
+		uint16_t _column;     // 列
+		uint16_t _rowSpan;	  // 行跨度
+		uint16_t _columnSpan; // 列跨度
 
 		CameraLayout operator=(const CameraLayout& layout) {
 			_row = layout._row;
@@ -35,14 +35,15 @@ struct CameraConfig
 		}
 	};
 
-	std::string _cameraIp;
-	std::string _cameraName;
-	std::string _cameraMark;
+	std::string _cameraIp;    // 相机IP
+	std::string _cameraName;  // 相机名称
+	std::string _cameraMark;  // 相机标记
+	std::string _imagePath;   // 图像路径
 
-	uint16_t _cameraIndex;
-	uint16_t _imageCount;
+	uint16_t _cameraIndex;    // 相机索引
+	uint16_t _imageCount;     // 图像数量
 
-	CameraType _cameraType;
+	CameraType _cameraType;  
 	CameraLayout _cameraLayout;
 
 	CameraConfig operator=(const CameraConfig& camera) {
@@ -53,6 +54,7 @@ struct CameraConfig
 		_cameraMark = camera._cameraMark;
 		_cameraLayout = camera._cameraLayout;
 		_cameraName = camera._cameraName;
+		_imagePath = camera._imagePath;
 		return *this;
 	}
 
@@ -63,6 +65,7 @@ struct CameraConfig
 			_imageCount == camera._imageCount &&
 			_cameraMark == camera._cameraMark &&
 			_cameraLayout == camera._cameraLayout &&
+			_imagePath == camera._imagePath &&
 			_cameraName == camera._cameraName;
 	}
 };

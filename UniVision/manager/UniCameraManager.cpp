@@ -20,6 +20,11 @@ UniCameraManager* UniCameraManager::instance()
 	return _instance;
 }
 
+std::string UniCameraManager::generateCameraKey(const CameraConfig& config)
+{
+	return config._cameraName + "-" + config._cameraIp;
+}
+
 
 UniCameraManager::UniCameraManager()
 {
@@ -39,7 +44,7 @@ UniCameraManager::~UniCameraManager()
 
 bool UniCameraManager::addCamera(const CameraConfig& config)
 {
-	std::string key = config._cameraIp;
+	std::string key = generateCameraKey(config);
 	std::lock_guard<std::mutex> lock(_cameraMutex);
 	if (_cameraMap.find(key) == _cameraMap.end())
 	{
@@ -125,6 +130,16 @@ bool UniCameraManager::stopGrabbing(const std::string& key)
 		return true;
 	}
 	return false;
+}
+
+void UniCameraManager::setGrabbingCallback(const std::string& key, const UniCameraBase::CameraCallback& callback)
+{
+	std::lock_guard<std::mutex> lock(_cameraMutex);
+	auto iter = _cameraMap.find(key);
+	if (iter != _cameraMap.end())
+	{
+		iter->second->setCallback(callback);
+	}
 }
 
 std::shared_ptr<UniCameraBase> UniCameraManager::getCameraPtr(const std::string& key)

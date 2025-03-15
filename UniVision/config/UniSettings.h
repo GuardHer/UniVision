@@ -4,6 +4,8 @@
 #include <vector>
 #include <mutex>
 #include "config/UniCameraConfig.h"
+#include "config/UniAlgorithmConfig.h"
+#include "config/UniLogConfig.h"
 
 class QSettings;
 
@@ -36,6 +38,30 @@ public:
 	/// </summary>
 	/// <param name="config"></param>
 	void setCameraConfigs(const std::vector<CameraConfig>& config);
+
+	/// <summary>
+	/// 获取日志配置
+	/// </summary>
+	/// <returns></returns>
+	UniLogConfig getLogConfig() const;
+
+	/// <summary>
+	/// 设置日志配置
+	/// </summary>
+	/// <param name="path"></param>
+	void setLogConfig(const UniLogConfig& config);
+
+	/// <summary>
+	/// 获取算法配置
+	/// </summary>
+	/// <returns></returns>
+	AlgorithmConfig getAlgorithmConfig() const;
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="config"></param>
+	void setAlgorithmConfig(const AlgorithmConfig& config);
 
 private:
 	UniSettings(QObject* parent = nullptr);

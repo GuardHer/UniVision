@@ -6,25 +6,28 @@
 
 #include <opencv2/opencv.hpp>
 
-enum class AlgorithmDetectType
+enum class AlgorithmDetectType : int
 {
-	UNI_ALGORITHM_CLS,
-	UNI_ALGORITHM_SEG,
-	UNI_ALGORITHM_OBB,
+	UNI_ALGORITHM_TOLO_SEG,
+	UNI_ALGORITHM_MMCV_SEG,
 };
 
 struct AlgotithmParam
 {
 	float _confidenceThreshold{ 0.5f }; // 置信度阈值
 	float _nmsThreshold{ 0.4f };        // NMS阈值
-	cv::Rect _roi;                      // 检测区域
 };
 
 struct AlgorithmConfig
 {
 	std::string _algorithmName; // 算法名称
-	std::string _modelPath;     // 模型路径
+	std::string _engineModelPath;     // 模型路径
+	std::string _onnxModelPath;     // 模型路径
 	std::string _labelPath;     // 标签路径
+	bool _enableCuda{ true };    // 是否启用CUDA
+	size_t _gpuIndex{ 0 };       // GPU索引
+	size_t _batchSize{ 1 };      // 批处理大小
+	size_t _threadNum{ 6 };      // 线程数量
 	AlgorithmDetectType _detectType; // 算法类型
 
 	AlgotithmParam _param;      // 算法参数
@@ -55,6 +58,6 @@ struct AlgorithmOutput
 	std::string _imageMark;       // 图像标记
 	uint16_t _cameraIndex;        // 相机索引
 	uint16_t _imageIndex;         // 图像索引
-
+	bool _bResult;                // 是否有结果
 	std::vector<Result> _results; // 检测结果
 };

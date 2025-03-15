@@ -125,7 +125,7 @@ void UniSimCamera::updateImagePaths(const std::set<std::string>& filter)
     _currentIndex = 0;
     _lastFilter = filter;
 
-    for (const auto& entry : std::filesystem::directory_iterator(_imagePath)) {
+    for (const auto& entry : std::filesystem::directory_iterator(_config._imagePath)) {
         std::string ext = entry.path().extension().string();
         if (filter.count(ext)) {
             _imagePaths.push_back(entry.path().string());
