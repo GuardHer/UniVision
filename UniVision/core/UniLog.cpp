@@ -53,7 +53,7 @@ void UniLog::init(spdlog::custom_log_callback cb)
         file_sink->set_level(static_cast<spdlog::level::level_enum>(config._level));
         vecSinks.push_back(file_sink);
         
-        spdlog::init_thread_pool(10240, 2);
+        spdlog::init_thread_pool(10240, 1);
         auto tp = spdlog::thread_pool();
         auto logger = std::make_shared<spdlog::async_logger>(config._logName, vecSinks.begin(), vecSinks.end(), tp, spdlog::async_overflow_policy::block);
         logger->set_level(static_cast<spdlog::level::level_enum>(config._level));

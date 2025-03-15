@@ -57,9 +57,9 @@ std::vector<YoloTRTOutput> YoloTRTDetect::process_batch_images(const std::vector
 			output._performance = _model->performanceReport();
 			outputs.push_back(std::move(output));
 
-			auto [throughput_str, gpu_latency_str, cpu_latency_str] = output._performance;
+			//auto [throughput_str, gpu_latency_str, cpu_latency_str] = output._performance;
 
-			LOG_DEBUG("YoloTRTDetect::process_single_image {}: {}, {}, {}", j, throughput_str, gpu_latency_str, cpu_latency_str);
+			//LOG_DEBUG("YoloTRTDetect::process_single_image {}: {}, {}, {}", j, throughput_str, gpu_latency_str, cpu_latency_str);
 		}
 	}
 

@@ -27,7 +27,8 @@ void UniMasterPage::initViews()
 
 	for (int i = 0; i < configs.size(); i++)
 	{
-		UniImageViewFrame* frame = new UniImageViewFrame(configs[i]._cameraName, this);
+		UniImageViewFrame* frame = new UniImageViewFrame(configs[i]._cameraMark, this);
+		_imageViews.insert(std::make_pair(configs[i]._cameraMark, frame));
 		//frame->setImage(QImage("C:\\Users\\gshtang\\Desktop\\shixun\\start.bmp"));
 		_gridLayout->addWidget(frame, configs[i]._cameraLayout._row, configs[i]._cameraLayout._column
 		                      , configs[i]._cameraLayout._rowSpan, configs[i]._cameraLayout._columnSpan);
@@ -46,6 +47,17 @@ void UniMasterPage::refreshViews()
 		delete item;
 		item = nullptr;
 	}
-
+	_imageViews.clear();
 	initViews();
 }
+
+void UniMasterPage::showImage(const cv::Mat& image, const std::string& mark)
+{
+	auto it = _imageViews.find(mark);
+	if (it != _imageViews.end())
+	{
+		if (it->second)
+			it->second->setImage(image);
+	}
+}
+

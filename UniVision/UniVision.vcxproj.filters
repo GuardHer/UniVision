@@ -45,6 +45,12 @@
     <Filter Include="Algorithm">
       <UniqueIdentifier>{13c28b6a-3535-42e2-8d56-eefebec5c5a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{040ddc44-9dfd-48c6-9356-e99df2ec18b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Algorithm\detect">
+      <UniqueIdentifier>{8c118ad0-bf5d-47a8-a655-4a028b80f829}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="UniVision.qrc">
@@ -100,6 +106,21 @@
     <ClCompile Include="algorithm\UniAlgorithm.cpp">
       <Filter>Algorithm</Filter>
     </ClCompile>
+    <ClCompile Include="algorithm\UniYoloOnnxDetect.cpp">
+      <Filter>Algorithm\detect</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\UniYoloTRTDetect.cpp">
+      <Filter>Algorithm\detect</Filter>
+    </ClCompile>
+    <ClCompile Include="core\UniLog.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="manager\UniAlgorithmManager.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
+    <ClCompile Include="extended\UniElaText.cpp">
+      <Filter>Extended controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="extended\UniElaToggleButton.h">
@@ -129,6 +150,12 @@
     <QtMoc Include="device\camera\UniSimCamera.h">
       <Filter>device\camera</Filter>
     </QtMoc>
+    <QtMoc Include="manager\UniAlgorithmManager.h">
+      <Filter>manager</Filter>
+    </QtMoc>
+    <QtMoc Include="extended\UniElaText.h">
+      <Filter>Extended controls</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config\UniAlgorithmConfig.h">
@@ -145,6 +172,21 @@
     </ClInclude>
     <ClInclude Include="algorithm\UniAlgorithm.h">
       <Filter>Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\UniThreadPool.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\UniYoloOnnxDetect.h">
+      <Filter>Algorithm\detect</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\UniYoloTRTDetect.h">
+      <Filter>Algorithm\detect</Filter>
+    </ClInclude>
+    <ClInclude Include="core\UniLog.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="config\UniLogConfig.h">
+      <Filter>conf</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

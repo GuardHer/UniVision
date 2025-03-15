@@ -40,6 +40,8 @@ private:
 	Q_DISABLE_COPY_MOVE(UniAlgorithmManager)
 
 public:
+	void init();
+
 	void process(const AlgorithmInput& input);
 
 Q_SIGNALS:

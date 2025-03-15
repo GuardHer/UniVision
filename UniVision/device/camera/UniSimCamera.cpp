@@ -2,6 +2,8 @@
 
 #include <filesystem>
 
+#include "core/UniLog.h"
+
 UniSimCamera::UniSimCamera(const CameraConfig& config, QObject* parent)
 	: UniCameraBase(config, parent)
 {
@@ -83,13 +85,15 @@ bool UniSimCamera::getTriggerMode()
 
 void UniSimCamera::softwareTrigger()
 {
+	LOG_INFO("UniSimCamera::softwareTrigger {}", _config._cameraName);
+
 	QMetaObject::invokeMethod(this, "onGrabbing", Qt::QueuedConnection);
 }
 
 void UniSimCamera::onGrabbing()
 {
 	if (!_isOpened) return;
-	cv::Mat image = grabImage({ ".bmp", ".jpg", ".png" }).clone();
+	cv::Mat image = grabImage({ ".bmp", ".jpg", ".jpeg", ".png" }).clone();
 	if (!image.empty()) {
 		++_imageFrame;
 		if (_callback) {
@@ -97,7 +101,7 @@ void UniSimCamera::onGrabbing()
 		}
 	}
     else {
-		std::cout << "No image grabbed!" << std::endl;
+		LOG_WARN("UniSimCamera::onGrabbing: image is empty");
     }
 }
 
@@ -125,13 +129,27 @@ void UniSimCamera::updateImagePaths(const std::set<std::string>& filter)
     _currentIndex = 0;
     _lastFilter = filter;
 
-    for (const auto& entry : std::filesystem::directory_iterator(_config._imagePath)) {
-        std::string ext = entry.path().extension().string();
-        if (filter.count(ext)) {
-            _imagePaths.push_back(entry.path().string());
+    try 
+    {
+        auto path = std::filesystem::path(_config._imagePath);
+        if (!std::filesystem::exists(path) ||
+            !std::filesystem::is_directory(path)) {
+            return;
         }
-    }
 
-    std::sort(_imagePaths.begin(), _imagePaths.end());
+        for (const auto& entry : std::filesystem::directory_iterator(_config._imagePath)) {
+            std::string ext = entry.path().extension().string();
+            if (filter.count(ext)) {
+                _imagePaths.push_back(entry.path().string());
+            }
+        }
+
+        std::sort(_imagePaths.begin(), _imagePaths.end());
+    }
+    catch (const std::exception& e) 
+    {
+        LOG_ERROR("UniSimCamera::updateImagePaths: {}", e.what());
+    }
+	
 }
 

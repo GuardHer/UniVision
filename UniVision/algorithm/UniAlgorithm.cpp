@@ -40,7 +40,8 @@ void UniAlgorithm::detect(const AlgorithmInput& input, AlgorithmOutput& output)
 	output._imageIndex = input._imageIndex;
 	output._imageMark = input._imageMark;
 
-	if (_modelTRT) {
+	if (_config._detectType == AlgorithmDetectType::UNI_ALGORITHM_TOLO_SEG &&
+		_config._enableCuda) {
 		YoloTRTPara para;
 		para._labels = generate_labels(_config._labelPath);
 		para._enginePath = _config._engineModelPath;
@@ -65,12 +66,21 @@ void UniAlgorithm::detect(const AlgorithmInput& input, AlgorithmOutput& output)
 			catch (const std::exception& e)
 			{
 				res._class = "Unknown";
-				LOG_WARN("Out of range: {}", e.what());
+				LOG_WARN("exception: {}", e.what());
+			}
+			catch (const std::out_of_range& e)
+			{
+				res._class = "Unknown";
+				LOG_WARN("out_of_range: {}", e.what());
+			}
+			catch (...)
+			{
+				res._class = "Unknown";
+				LOG_WARN("Unknown exception.");
 			}
 
 			output._results.push_back(std::move(res));
 		}
-
 		output._bResult = !output._results.empty();
 		output._dstImage = std::move(dstImage);
 	}
@@ -79,7 +89,7 @@ void UniAlgorithm::detect(const AlgorithmInput& input, AlgorithmOutput& output)
 	}
 }
 
-void UniAlgorithm::init(AlgorithmConfig&& config)
+void UniAlgorithm::init(const AlgorithmConfig& config)
 {
 	if (_isInit)
 	{
@@ -87,7 +97,7 @@ void UniAlgorithm::init(AlgorithmConfig&& config)
 		return;
 	}
 
-	_config = std::move(config);
+	_config = config;
 
 	if (_config._detectType == AlgorithmDetectType::UNI_ALGORITHM_TOLO_SEG &&
 		_config._enableCuda)
@@ -95,7 +105,8 @@ void UniAlgorithm::init(AlgorithmConfig&& config)
 		deploy::InferOption option;
 		option.enableSwapRB();
 		option.enablePerformanceReport();
-		_modelTRT = std::make_unique<deploy::SegmentModel>(_config._engineModelPath, option);
+
+		_modelTRT = std::make_shared<deploy::SegmentModel>(_config._engineModelPath, option);
 
 		LOG_INFO("YoloTRT model loaded.");
 	}

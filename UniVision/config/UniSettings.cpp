@@ -86,7 +86,7 @@ UniLogConfig UniSettings::getLogConfig() const
 {
 	UniLogConfig config;
 	config._logName = _settings->value("Log/LogName", "UniLog").toString().toStdString();
-	config._logSavePath = _settings->value("Log/LogSavePath", qApp->applicationDirPath() + "/Log/log.txt").toString().toStdString();
+	config._logSavePath = _settings->value("Log/LogSavePath", qApp->applicationDirPath() + "/Log/log.log").toString().toStdString();
 	config._logPattern = _settings->value("Log/LogPattern", "").toString().toStdString();
 	config._logRotateHour = _settings->value("Log/LogRotateHour", 23).toInt();
 	config._logRotateMinute = _settings->value("Log/LogRotateMinute", 59).toInt();

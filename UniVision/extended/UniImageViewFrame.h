@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <opencv2/opencv.hpp>
+
 #include "extended/UniElaFrame.h"
 #include "extended/UniElaWidget.h"
 
@@ -30,6 +33,7 @@ public:
 	/// </summary>
 	/// <param name="image"></param>
 	void setImage(const QImage& image);
+	void setImage(const cv::Mat& image);
 
 private:
 

@@ -72,10 +72,11 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)3rdparty\spdlog\include\;$(SolutionDir)3rdparty\TensorRT-YOLO\;$(SolutionDir)3rdparty\TensorRT\include\;$(SolutionDir)3rdparty\opencv\include\;$(SolutionDir)3rdparty\CUDA\include\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\include\</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\TensorRT-YOLO\lib\plugin\;$(SolutionDir)3rdparty\TensorRT-YOLO\lib\;$(SolutionDir)3rdparty\TensorRT\lib\;$(SolutionDir)3rdparty\opencv\x64\vc17\lib\;$(SolutionDir)3rdparty\CUDA\lib\x64\;$(SolutionDir)3rdparty\ElaWidgetTools\install\ElaWidgetTools\lib\;$(SolutionDir)bin</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ElaWidgetTools.lib;deploy.lib;custom_plugins.lib;opencv_world4100.lib;opencv_img_hash4100.lib;nvinfer_10.lib;nvinfer_dispatch_10.lib;nvinfer_lean_10.lib;nvinfer_plugin_10.lib;nvinfer_vc_plugin_10.lib;nvonnxparser_10.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ElaWidgetTools.lib;deployd.lib;custom_pluginsd.lib;opencv_world4100.lib;opencv_img_hash4100.lib;nvinfer_10.lib;nvinfer_dispatch_10.lib;nvinfer_lean_10.lib;nvinfer_plugin_10.lib;nvinfer_vc_plugin_10.lib;nvonnxparser_10.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -112,7 +113,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
@@ -121,14 +122,19 @@
     <QtRcc Include="UniVision.qrc" />
     <QtMoc Include="UniVision.h" />
     <ClCompile Include="algorithm\UniAlgorithm.cpp" />
+    <ClCompile Include="algorithm\UniYoloOnnxDetect.cpp" />
+    <ClCompile Include="algorithm\UniYoloTRTDetect.cpp" />
     <ClCompile Include="config\UniSettings.cpp" />
+    <ClCompile Include="core\UniLog.cpp" />
     <ClCompile Include="device\camera\UniCameraBase.cpp" />
     <ClCompile Include="device\camera\UniSimCamera.cpp" />
     <ClCompile Include="extended\UniElaFrame.cpp" />
+    <ClCompile Include="extended\UniElaText.cpp" />
     <ClCompile Include="extended\UniElaToggleButton.cpp" />
     <ClCompile Include="extended\UniElaWidget.cpp" />
     <ClCompile Include="extended\UniImageViewFrame.cpp" />
     <ClCompile Include="manager\AppStateManager.cpp" />
+    <ClCompile Include="manager\UniAlgorithmManager.cpp" />
     <ClCompile Include="manager\UniCameraManager.cpp" />
     <ClCompile Include="page\UniMasterPage.cpp" />
     <ClCompile Include="test\Test.cpp" />
@@ -156,10 +162,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="algorithm\UniAlgorithm.h" />
+    <ClInclude Include="algorithm\UniYoloOnnxDetect.h" />
+    <ClInclude Include="algorithm\UniYoloTRTDetect.h" />
     <ClInclude Include="config\UniAlgorithmConfig.h" />
     <ClInclude Include="config\UniCameraConfig.h" />
     <QtMoc Include="device\camera\UniCameraBase.h" />
     <QtMoc Include="device\camera\UniSimCamera.h" />
+    <ClInclude Include="config\UniLogConfig.h" />
+    <ClInclude Include="core\UniLog.h" />
+    <ClInclude Include="core\UniThreadPool.h" />
+    <QtMoc Include="manager\UniAlgorithmManager.h" />
+    <QtMoc Include="extended\UniElaText.h" />
     <ClInclude Include="manager\UniCameraManager.h" />
     <ClInclude Include="test\Test.h" />
     <QtMoc Include="extended\UniElaFrame.h" />

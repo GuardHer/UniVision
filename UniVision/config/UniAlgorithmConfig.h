@@ -31,6 +31,22 @@ struct AlgorithmConfig
 	AlgorithmDetectType _detectType; // 算法类型
 
 	AlgotithmParam _param;      // 算法参数
+
+	// operate =
+	AlgorithmConfig& operator=(const AlgorithmConfig& other)
+	{
+		_algorithmName = other._algorithmName;
+		_engineModelPath = other._engineModelPath;
+		_onnxModelPath = other._onnxModelPath;
+		_labelPath = other._labelPath;
+		_enableCuda = other._enableCuda;
+		_gpuIndex = other._gpuIndex;
+		_batchSize = other._batchSize;
+		_threadNum = other._threadNum;
+		_detectType = other._detectType;
+		_param = other._param;
+		return *this;
+	}
 };
 
 

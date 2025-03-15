@@ -81,6 +81,13 @@ void UniImageViewFrame::setImage(const QImage& image)
 
 }
 
+void UniImageViewFrame::setImage(const cv::Mat& image)
+{
+	if (image.empty()) return;
+	QImage qImage(image.data, image.cols, image.rows, image.step, QImage::Format_RGB888);
+	setImage(qImage.rgbSwapped());
+}
+
 void UniImageViewFrame::resizeEvent(QResizeEvent* event)
 {
 	if (d->_view) {
