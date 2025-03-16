@@ -8,6 +8,7 @@
 #include "deploy/option.hpp"
 #include "deploy/result.hpp"
 #include "Test.h"
+#include "cuda.h"
 
 namespace fs = std::filesystem;
 
@@ -232,7 +233,7 @@ int TestAlgorithm(int argc, char** argv) {
     return 0;
 }
 
-int TestAlgorithm2(int argc, char** argv)
+int TestAlgorithm2()
 {
     auto* registry = getPluginRegistry();
     int32_t count;
@@ -242,6 +243,12 @@ int TestAlgorithm2(int argc, char** argv)
 		auto* creator = plugin[i];
 		std::cout << "Plugin name: " << creator->getPluginName() << std::endl;
 	}
+    CUmoduleLoadingMode mode;
 
+    assert(CUDA_SUCCESS == cuInit(0));
+    assert(CUDA_SUCCESS == cuModuleGetLoadingMode(&mode));
+
+    std::cout << "CUDA Module Loading Mode is " << ((mode == CU_MODULE_LAZY_LOADING) ? "lazy" : "eager") << std::endl;
+   
     return 0;
 }

@@ -10,16 +10,21 @@
 #include <functional>
 #include <stdexcept>
 
-class ThreadPool {
+class UniThreadPool {
 public:
-    ThreadPool(size_t);
+    UniThreadPool(size_t);
     template<class F, class... Args>
     auto enqueue(F&& f, Args&&... args)
         -> std::future<typename std::result_of<F(Args...)>::type>;
-    ~ThreadPool();
+    ~UniThreadPool();
+
+    // get thread id
+	std::set< std::thread::id > getThrIds() const { return threads; }
+
 private:
     // need to keep track of threads so we can join them
     std::vector< std::thread > workers;
+    std::set< std::thread::id > threads;
     // the task queue
     std::queue< std::function<void()> > tasks;
 
@@ -30,7 +35,7 @@ private:
 };
 
 // the constructor just launches some amount of workers
-inline ThreadPool::ThreadPool(size_t threads)
+inline UniThreadPool::UniThreadPool(size_t threads)
     : stop(false)
 {
     for (size_t i = 0; i < threads; ++i)
@@ -59,7 +64,7 @@ inline ThreadPool::ThreadPool(size_t threads)
 
 // add new work item to the pool
 template<class F, class... Args>
-auto ThreadPool::enqueue(F&& f, Args&&... args)
+auto UniThreadPool::enqueue(F&& f, Args&&... args)
 -> std::future<typename std::result_of<F(Args...)>::type>
 {
     using return_type = typename std::result_of<F(Args...)>::type;
@@ -83,7 +88,7 @@ auto ThreadPool::enqueue(F&& f, Args&&... args)
 }
 
 // the destructor joins all threads
-inline ThreadPool::~ThreadPool()
+inline UniThreadPool::~UniThreadPool()
 {
     {
         std::unique_lock<std::mutex> lock(queue_mutex);

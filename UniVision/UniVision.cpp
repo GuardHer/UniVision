@@ -6,6 +6,8 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QTimerEvent>
+#include <QTimer>
+
 #include <ElaMenuBar.h>
 #include <ElaWidget.h>
 #include <ElaPushButton.h>
@@ -15,11 +17,15 @@
 #include <ElaToggleSwitch.h>
 #include <ElaToolBar.h>
 #include <ElaText.h>
+#include <ElaSpinBox.h>
 #include <ElaStatusBar.h>
+#include <ElaMultiSelectComboBox.h>
+#include <ElaMessageBar.h>
 
 #include "manager/AppStateManager.h"
 #include "manager/UniCameraManager.h"
 #include "manager/UniAlgorithmManager.h"
+#include "algorithm/UniAlgorithm.h"
 #include "extended/UniElaToggleButton.h"
 #include "extended/UniElaText.h"
 #include "page/UniMasterPage.h"
@@ -32,7 +38,7 @@ UniVision::UniVision(QWidget *parent)
 	g_pLog->init([](const spdlog::details::log_msg& msg) {
 		//std::cout << std::string(msg.payload.data(), msg.payload.size()) << std::endl;
 	});
-
+    
 	initWindow();
 
     initEdgeLayout();
@@ -41,8 +47,7 @@ UniVision::UniVision(QWidget *parent)
 
     initDevice();
 
-    g_pUniAlgorithmManager->init();
-	connect(g_pUniAlgorithmManager, &UniAlgorithmManager::resultReady, this, &UniVision::onAlgorithmResultReady);
+    initAlgorithm();
 
     Q_EMIT AppStateManager::instance()->runStateChanged(AppStateManager::instance()->runState());
 
@@ -98,10 +103,64 @@ void UniVision::initEdgeLayout()
             _statusButton->setText(u8"停止中...");
         }
     });
-    _statusButton->setFixedWidth(100);
+    _statusButton->setFixedSize(100, 32);
     _toolBar->addWidget(_statusButton);
 
+    // 模拟触发相机
+    _toolBar->addSeparator();
+	_selectCameras = new ElaMultiSelectComboBox(this);
+    std::vector<CameraConfig> cameraConfigs;
+    UNI_SETTINGS->getCameraConfigs(cameraConfigs);
+	for (const auto& config : cameraConfigs) {
+		_selectCameras->addItem(QString::fromStdString(config._cameraName));
+	}
+	_selectCameras->setFixedSize(120, 32);
+	_toolBar->addWidget(_selectCameras);
+
+    _singleTrigger = new ElaToolButton(this);
+    _singleTrigger->setElaIcon(ElaIconType::ArrowRightToArc);
+    _singleTrigger->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    _singleTrigger->setText("Single Trigger");
+    _toolBar->addWidget(_singleTrigger);
+	connect(_singleTrigger, &ElaToolButton::clicked, this, &UniVision::onSimSingleTrigger);
+
+    _toolBar->addSeparator();
+
+	_timeInterval = new ElaSpinBox(this);
+	_timeInterval->setRange(100, 100000);
+	_timeInterval->setValue(1000);
+	_timeInterval->setSingleStep(100);
+	_timeInterval->setSuffix(" ms");
+	_toolBar->addWidget(_timeInterval);
+
+    _triggerCount = new ElaSpinBox(this);
+    _triggerCount->setRange(0, 100000);
+    _triggerCount->setValue(5);
+    _triggerCount->setSingleStep(1);
+    _triggerCount->setSuffix(" 次 "); 
+    _toolBar->addWidget(_triggerCount);
+
+    _timerTrigger = new ElaToolButton(this);
+    _timerTrigger->setElaIcon(ElaIconType::Timer);
+    _timerTrigger->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    _timerTrigger->setText("Timer Trigger");
+	_toolBar->addWidget(_timerTrigger);
+	connect(_timerTrigger, &ElaToolButton::clicked, this, &UniVision::onSimTimerTrigger);
+
+	_timerStatus = new UniElaToggleButton(this);
+    _timerStatus->setFixedSize(100, 32);
+    _timerStatus->setIsToggled(false);
+    _timerStatus->setText(u8"未触发...");
+    _toolBar->addWidget(_timerStatus);
+
+	_simTriggerTimer = new QTimer(this);
+	connect(_simTriggerTimer, &QTimer::timeout, this, &UniVision::onSimTriggerTimeout);
+
+    _toolBar->addSeparator();
+
+
     this->addToolBar(Qt::TopToolBarArea, _toolBar);
+
 
     _statusBar = new ElaStatusBar(this);
 	_statusBar->setContentsMargins(10, 0, 10, 0);
@@ -130,6 +189,14 @@ void UniVision::initDevice()
     }
 }
 
+void UniVision::initAlgorithm()
+{
+    g_pUniAlgorithmManager->init();
+
+    auto cb = std::bind(&UniVision::onAlgorithmResultReady, this, std::placeholders::_1, std::placeholders::_2);
+    g_pUniAlgorithm->setAlgorithmResultReadyCallback(std::move(cb));
+}
+
 void UniVision::onCameraGrabbing(const cv::Mat& srcImg, const std::string& imageMark, uint16_t cameraIndex, uint16_t imageIndex)
 {
     LOG_INFO("UniVision::onCameraGrabbing: {}, {}, {}", imageMark, cameraIndex, imageIndex);
@@ -147,7 +214,7 @@ void UniVision::onAlgorithmResultReady(const AlgorithmInput& input, const Algori
 {
     LOG_INFO("UniVision::onAlgorithmResultReady: {}, {}, {}", input._cameraIndex, input._imageIndex, output._imageMark);
 
-    _masterPage->showImage(output._dstImage, output._imageMark);
+    _masterPage->showImage(output);
 }
 
 void UniVision::onRun(bool checked)
@@ -164,9 +231,6 @@ void UniVision::onRun(bool checked)
         bool isOpen = camera->open();
 		bool isGrabb = camera->startGrabbing();
         LOG_INFO("Camera opened: {}", camera_key);
-
-
-        camera->softwareTrigger();
     }
 }
 
@@ -183,6 +247,86 @@ void UniVision::onStop(bool checked)
 		camera->stopGrabbing();
 		camera->close();
 		LOG_INFO("Camera closed: {}", camera_key);
+	}
+
+	_simTriggerTimer->stop();
+}
+
+void UniVision::onSimTimerTrigger(bool checked)
+{
+
+	if (_simTriggerTimer->isActive()) {
+		_simTriggerTimer->stop();
+		_timerStatus->setIsToggled(false);
+		_timerStatus->setText(u8"未触发...");
+	}
+	else {
+		auto status = AppStateManager::instance()->runState();
+		if (status != AppStateManager::RunState::Running) {
+			ElaMessageBar::warning(ElaMessageBarType::Top, "warning", u8"请先开始运行再执行软触发!", 2, this);
+			return;
+		}
+
+		_simTriggerTimer->start(_timeInterval->value());
+		_timerStatus->setIsToggled(true);
+		_timerStatus->setText(u8"已触发...");
+	}
+
+}
+
+void UniVision::onSimSingleTrigger(bool checked)
+{
+	auto status = AppStateManager::instance()->runState();
+	if (status != AppStateManager::RunState::Running) {
+		ElaMessageBar::warning(ElaMessageBarType::Top, "warning", u8"请先开始运行再执行软触发!", 2, this);
+		return;
+	}
+
+	std::vector<CameraConfig> cameraConfigs;
+	UNI_SETTINGS->getCameraConfigs(cameraConfigs);
+
+    QStringList selectedCameras = _selectCameras->getCurrentSelection();
+
+	for (const auto& config : cameraConfigs) {
+		if (!selectedCameras.contains(QString::fromStdString(config._cameraName))) {
+			continue;
+		}
+
+		const std::string& camera_key = g_pUniCameraManager->generateCameraKey(config);
+
+		auto camera = g_pUniCameraManager->getCameraPtr(camera_key);
+		camera->softwareTrigger();
+	}
+}
+
+void UniVision::onSimTriggerTimeout()
+{
+	int count = _triggerCount->value();
+	if (count > 0) {
+		_triggerCount->setValue(count - 1);
+	}
+	else {
+		_simTriggerTimer->stop();
+		_timerStatus->setIsToggled(false);
+		_timerStatus->setText(u8"未触发...");
+
+		return;
+	}
+
+	std::vector<CameraConfig> cameraConfigs;
+	UNI_SETTINGS->getCameraConfigs(cameraConfigs);
+
+	QStringList selectedCameras = _selectCameras->getCurrentSelection();
+
+	for (const auto& config : cameraConfigs) {
+		if (!selectedCameras.contains(QString::fromStdString(config._cameraName))) {
+			continue;
+		}
+
+		const std::string& camera_key = g_pUniCameraManager->generateCameraKey(config);
+
+		auto camera = g_pUniCameraManager->getCameraPtr(camera_key);
+		camera->softwareTrigger();
 	}
 }
 

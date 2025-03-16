@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
 #endif
 
 	//TestAll();
+    //TestAlgorithm2();
     //TestAlgorithm(argc, argv);
     QApplication a(argc, argv);
     eApp->init();

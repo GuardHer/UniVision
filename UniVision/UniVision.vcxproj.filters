@@ -121,6 +121,9 @@
     <ClCompile Include="extended\UniElaText.cpp">
       <Filter>Extended controls</Filter>
     </ClCompile>
+    <ClCompile Include="algorithm\UniAlgorithmUtils.cpp">
+      <Filter>Algorithm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="extended\UniElaToggleButton.h">
@@ -149,9 +152,6 @@
     </QtMoc>
     <QtMoc Include="device\camera\UniSimCamera.h">
       <Filter>device\camera</Filter>
-    </QtMoc>
-    <QtMoc Include="manager\UniAlgorithmManager.h">
-      <Filter>manager</Filter>
     </QtMoc>
     <QtMoc Include="extended\UniElaText.h">
       <Filter>Extended controls</Filter>
@@ -187,6 +187,12 @@
     </ClInclude>
     <ClInclude Include="config\UniLogConfig.h">
       <Filter>conf</Filter>
+    </ClInclude>
+    <ClInclude Include="manager\UniAlgorithmManager.h">
+      <Filter>manager</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\UniAlgorithmUtils.h">
+      <Filter>Algorithm</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

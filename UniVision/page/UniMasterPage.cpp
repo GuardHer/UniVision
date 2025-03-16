@@ -51,6 +51,11 @@ void UniMasterPage::refreshViews()
 	initViews();
 }
 
+void UniMasterPage::showImage(const AlgorithmOutput& output)
+{
+	QMetaObject::invokeMethod(this, "showImage", Qt::QueuedConnection, Q_ARG(cv::Mat, output._dstImage), Q_ARG(std::string, output._imageMark));
+}
+
 void UniMasterPage::showImage(const cv::Mat& image, const std::string& mark)
 {
 	auto it = _imageViews.find(mark);

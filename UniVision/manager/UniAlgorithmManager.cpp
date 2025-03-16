@@ -24,15 +24,14 @@ UniAlgorithmManager* UniAlgorithmManager::instance()
 UniAlgorithmManager::UniAlgorithmManager()
 {
 	auto config = UNI_SETTINGS->getAlgorithmConfig();
-	_threadPool.setMaxThreadCount(config._threadNum);
+	//_threadPool.setMaxThreadCount(config._threadNum);
+
+	_uniThreadPoolPtr = std::make_unique<UniThreadPool>(config._threadNum);
 }
 
 
 UniAlgorithmManager::~UniAlgorithmManager()
 {
-	_threadPool.setMaxThreadCount(20);
-	_threadPool.waitForDone(2000);
-	_threadPool.deleteLater();
 }
 
 void UniAlgorithmManager::init()
@@ -45,38 +44,35 @@ void UniAlgorithmManager::init()
 
 void UniAlgorithmManager::process(const AlgorithmInput& input)
 {
-	UniAlgorithProcess* process = new UniAlgorithProcess(input);
-	process->setAutoDelete(true);
-	connect(process, &UniAlgorithProcess::resultReady, this, &UniAlgorithmManager::resultReady, Qt::DirectConnection);
-	_threadPool.start(process);
+	auto AlgoExec = std::bind(&UniAlgorithmManager::execute, this, input);
+	_uniThreadPoolPtr->enqueue(std::move(AlgoExec));
 }
 
-
-#pragma region UniAlgorithProcess
-UniAlgorithProcess::UniAlgorithProcess(const AlgorithmInput& input)
-	: _input(input)
-{
-}
-
-UniAlgorithProcess::~UniAlgorithProcess()
-{
-}
-
-void UniAlgorithProcess::run()
+void UniAlgorithmManager::execute(const AlgorithmInput& input)
 {
 	AlgorithmOutput output;
 
 	// start timeStamp
 	auto start = std::chrono::high_resolution_clock::now();
-	g_pUniAlgorithm->detect(_input, output);
+
+	try
+	{
+		g_pUniAlgorithm->detect(input, output);
+	}
+	catch (const std::exception& e)
+	{
+		LOG_ERROR("算法异常: {}", e.what());
+	}
+	catch (...)
+	{
+		LOG_ERROR("算法异常: 未知异常");
+	}
+
 	// end timeStamp
 	auto end = std::chrono::high_resolution_clock::now();
 
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
 	LOG_INFO("算法耗时: {}, {}ms", output._imageMark, duration.count());
-
-	Q_EMIT resultReady(_input, std::move(output));
 }
 
-#pragma endregion UniAlgorithProcess

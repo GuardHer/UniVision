@@ -8,13 +8,16 @@
 
 #include "config/UniAlgorithmConfig.h"
 
-class UniElaText;
+class QTimer;
 class ElaText;
+class UniElaText;
+class ElaSpinBox;
 class ElaToolBar;
 class ElaStatusBar;
 class ElaToolButton;
 class ElaToggleButton;
 class UniElaToggleButton;
+class ElaMultiSelectComboBox;
 
 class UniMasterPage;
 
@@ -33,6 +36,7 @@ private:
     void initContent();
 
 	void initDevice();
+	void initAlgorithm();
 
 	void onCameraGrabbing(const cv::Mat& srcImg,
 		const std::string& imageMark,
@@ -43,7 +47,12 @@ private Q_SLOTS:
 	void onRun(bool checked);
 	void onStop(bool checked);
 
-	// UniAlgorithmManager::resultReady
+	void onSimTimerTrigger(bool checked);
+	void onSimSingleTrigger(bool checked);
+	void onSimTriggerTimeout();
+
+
+private:
 	void onAlgorithmResultReady(const AlgorithmInput& input, const AlgorithmOutput& output);
 
 
@@ -58,6 +67,15 @@ private:
     UniElaToggleButton* _statusButton{ nullptr };
     UniMasterPage* _masterPage{ nullptr };
 	ElaStatusBar* _statusBar{ nullptr };
+
+	// 模拟触发
+	ElaMultiSelectComboBox* _selectCameras{ nullptr };
+	ElaSpinBox* _timeInterval{ nullptr };  // 时间间隔 ms
+	ElaSpinBox* _triggerCount{ nullptr };  // 触发次数
+	UniElaToggleButton* _timerStatus{ nullptr }; // 定时状态
+	QTimer* _simTriggerTimer{ nullptr }; // 模拟触发定时器
+	ElaToolButton* _timerTrigger{ nullptr };  // 定时触发
+	ElaToolButton* _singleTrigger{ nullptr }; // 单次触发
 
 	std::unordered_map<std::string, UniElaText*> _deviceStatus;
 };

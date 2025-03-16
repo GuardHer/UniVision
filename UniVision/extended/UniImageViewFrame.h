@@ -36,10 +36,11 @@ public:
 	void setImage(const cv::Mat& image);
 
 private:
+	static QImage cvMat2QImage(const cv::Mat& mat);
 
 protected:
 	void resizeEvent(QResizeEvent*) override;
-	void paintEvent(QPaintEvent* event) override;
+	//void paintEvent(QPaintEvent* event) override;
 
 
 private:

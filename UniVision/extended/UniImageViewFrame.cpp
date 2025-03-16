@@ -56,6 +56,17 @@ UniImageViewFrame::UniImageViewFrame(const std::string& key, QWidget* parent)
 	if (d->_text) {
 		d->_text->setText(QString::fromStdString(key));
 	}
+
+	connect(eTheme, &ElaTheme::themeModeChanged, this, [this](ElaThemeType::ThemeMode theme) {
+		if (d->_view)
+		{
+			QColor color = theme == ElaThemeType::ThemeMode::Dark
+				? QColor(0, 0, 0)
+				: QColor(255, 255, 255);
+
+			d->_view->setBackgroundBrush(color);
+		}
+	});
 }
 
 ElaGraphicsView* UniImageViewFrame::view() const
@@ -73,19 +84,23 @@ void UniImageViewFrame::setImage(const QImage& image)
 	if (image.isNull()) return;
 
 	d->_scene->clear();
+	delete d->_currItem;
+	d->_currItem = nullptr;
 	d->_currItem = d->_scene->addPixmap(QPixmap::fromImage(image));
 	dynamic_cast<QGraphicsPixmapItem*>(d->_currItem)->setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
 	
 	d->_scene->setSceneRect(d->_currItem->boundingRect());
 	d->_view->resetTransform();
 
+	if (d->_currItem) {
+		d->_view->fitInView(d->_currItem, Qt::KeepAspectRatio);
+	}
 }
 
 void UniImageViewFrame::setImage(const cv::Mat& image)
 {
 	if (image.empty()) return;
-	QImage qImage(image.data, image.cols, image.rows, image.step, QImage::Format_RGB888);
-	setImage(qImage.rgbSwapped());
+	setImage(cvMat2QImage(image));
 }
 
 void UniImageViewFrame::resizeEvent(QResizeEvent* event)
@@ -114,16 +129,40 @@ void UniImageViewFrame::resizeEvent(QResizeEvent* event)
 	QFrame::resizeEvent(event);
 }
 
-void UniImageViewFrame::paintEvent(QPaintEvent* event)
+//void UniImageViewFrame::paintEvent(QPaintEvent* event)
+//{
+//	if (d->_view)
+//	{
+//		QColor color = eTheme->getThemeMode() == ElaThemeType::ThemeMode::Dark 
+//			? QColor(0, 0, 0) 
+//			: QColor(255, 255, 255);
+//
+//		d->_view->setBackgroundBrush(color);
+//	}
+//
+//	QFrame::paintEvent(event);
+//}
+
+
+
+QImage UniImageViewFrame::cvMat2QImage(const cv::Mat& mat)
 {
-	if (d->_view)
+	QImage image;
+	switch (mat.type())
 	{
-		QColor color = eTheme->getThemeMode() == ElaThemeType::ThemeMode::Dark 
-			? QColor(0, 0, 0) 
-			: QColor(255, 255, 255);
-
-		d->_view->setBackgroundBrush(color);
+	case CV_8UC1:
+		image = QImage((const unsigned char*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Grayscale8);
+		break;
+	case CV_8UC3:
+		image = QImage((const unsigned char*)mat.data, mat.cols, mat.rows, mat.cols * 3, QImage::Format_BGR888);
+		break;
+	case CV_8UC4:
+		image = QImage((const unsigned char*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_ARGB32);
+		break;
+	case CV_16UC4:
+		image = QImage((const unsigned char*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGBA64);
+		image = image.rgbSwapped();
+		break;
 	}
-
-	QFrame::paintEvent(event);
+	return image;
 }

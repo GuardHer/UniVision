@@ -13,16 +13,17 @@ class UniMasterPage : public UniElaWidget
 	Q_OBJECT
 public:
 	UniMasterPage(QWidget* parent = nullptr);
-	void showImage(const cv::Mat& image, const std::string& mark);
+	void showImage(const AlgorithmOutput& output);
 
 private:
 	void initViews();
 	void refreshViews();
 
-
 protected:
 
-public slots:
+private slots:
+	void showImage(const cv::Mat& image, const std::string& mark);
+
 
 protected:
 	QGridLayout* _gridLayout {nullptr};

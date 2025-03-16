@@ -2,10 +2,12 @@
 
 #include <iostream>
 #include <fstream>
-
+#include <locale>
+#include <codecvt>
 #include "core/UniThreadPool.h"
 #include "core/UniLog.h"
 #include "UniYoloTRTDetect.h"
+#include "UniYoloOnnxDetect.h"
 
 UniAlgorithm* UniAlgorithm::_instance = nullptr;
 std::mutex UniAlgorithm::_mutex;
@@ -34,27 +36,36 @@ UniAlgorithm::~UniAlgorithm()
 }
 
 
+void UniAlgorithm::setAlgorithmResultReadyCallback(const AlgorithmResultReadyCallback& callback)
+{
+	_resultReadyCallback = callback;
+}
+
 void UniAlgorithm::detect(const AlgorithmInput& input, AlgorithmOutput& output)
 {
 	output._cameraIndex = input._cameraIndex;
 	output._imageIndex = input._imageIndex;
 	output._imageMark = input._imageMark;
+	std::vector<OutputParams> onnx_output;
 
-	if (_config._detectType == AlgorithmDetectType::UNI_ALGORITHM_TOLO_SEG &&
+	if (_config._detectType == AlgorithmDetectType::UNI_ALGORITHM_YOLO_SEG &&
 		_config._enableCuda) {
 		YoloTRTPara para;
 		para._labels = generate_labels(_config._labelPath);
 		para._enginePath = _config._engineModelPath;
+		para._colors = _colors;
 		para._confidenceThreshold = _config._param._confidenceThreshold;
 
-		std::unique_ptr<YoloTRTDetect> detect = std::make_unique<YoloTRTDetect>(para, _modelTRT->clone());
+		std::lock_guard<std::mutex> lock(_mutexDetect);
+		std::unique_ptr<YoloTRTDetect> detect = std::make_unique<YoloTRTDetect>(para);
+
 		cv::Mat dstImage;
-		YoloTRTOutput result = detect->process_single_image(input._srcImage, dstImage);
+		YoloTRTOutput result = detect->process_single_image(_modelTRT.get(), input._srcImage, dstImage);
 
 		for (size_t i = 0; i < result._result.num; ++i) {
-			auto& box = result._result.boxes[i];           // µ±Ç°Ä¿±êµÄ±ß½ç¿ò
-			int         cls = result._result.classes[i];   // µ±Ç°Ä¿±êµÄÀà±ð
-			float       score = result._result.scores[i];  // µ±Ç°Ä¿±êµÄÖÃÐÅ¶È
+			auto& box = result._result.boxes[i];           // å½“å‰ç›®æ ‡çš„è¾¹ç•Œæ¡†
+			int         cls = result._result.classes[i];   // å½“å‰ç›®æ ‡çš„ç±»åˆ«
+			float       score = result._result.scores[i];  // å½“å‰ç›®æ ‡çš„ç½®ä¿¡åº¦
 
 			AlgorithmOutput::Result res;
 			res._score = score;
@@ -68,11 +79,6 @@ void UniAlgorithm::detect(const AlgorithmInput& input, AlgorithmOutput& output)
 				res._class = "Unknown";
 				LOG_WARN("exception: {}", e.what());
 			}
-			catch (const std::out_of_range& e)
-			{
-				res._class = "Unknown";
-				LOG_WARN("out_of_range: {}", e.what());
-			}
 			catch (...)
 			{
 				res._class = "Unknown";
@@ -84,8 +90,24 @@ void UniAlgorithm::detect(const AlgorithmInput& input, AlgorithmOutput& output)
 		output._bResult = !output._results.empty();
 		output._dstImage = std::move(dstImage);
 	}
+	else if (_config._detectType == AlgorithmDetectType::UNI_ALGORITHM_ONNX_SEG) {
+		cv::Mat dstImage = input._srcImage.clone();
+		auto res = _modelOnnx->OnnxDetect(input._srcImage, onnx_output, dstImage);
+		auto labels = generate_labels(_config._labelPath);
+		std::vector<cv::Scalar> color;
+		GenerateColor(color, labels.size());
+
+		output._dstImage = std::move(dstImage);
+		output._bResult = !onnx_output.empty();
+	}
 	else {
 		std::cout << "UniAlgorithm has not been initialized." << std::endl;
+		return;
+	}
+
+	if (_resultReadyCallback)
+	{
+		_resultReadyCallback(input, output);
 	}
 }
 
@@ -98,17 +120,21 @@ void UniAlgorithm::init(const AlgorithmConfig& config)
 	}
 
 	_config = config;
-
-	if (_config._detectType == AlgorithmDetectType::UNI_ALGORITHM_TOLO_SEG &&
+	GenerateColor(_colors, generate_labels(_config._labelPath).size());
+	if (_config._detectType == AlgorithmDetectType::UNI_ALGORITHM_YOLO_SEG &&
 		_config._enableCuda)
 	{
 		deploy::InferOption option;
 		option.enableSwapRB();
 		option.enablePerformanceReport();
 
-		_modelTRT = std::make_shared<deploy::SegmentModel>(_config._engineModelPath, option);
+		_modelTRT = std::make_unique<deploy::SegmentModel>(_config._engineModelPath, option);
 
 		LOG_INFO("YoloTRT model loaded.");
+	}
+	else if (_config._detectType == AlgorithmDetectType::UNI_ALGORITHM_ONNX_SEG) {
+		_modelOnnx = std::make_unique<YoloSegOnnxDetect>(generate_labels(_config._labelPath), _colors);
+		_modelOnnx->ReadModel(_config._onnxModelPath, _config._enableCuda, _config._gpuIndex);
 	}
 	else
 	{

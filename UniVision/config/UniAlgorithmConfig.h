@@ -3,13 +3,15 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <functional>
 
 #include <opencv2/opencv.hpp>
 
 enum class AlgorithmDetectType : int
 {
-	UNI_ALGORITHM_TOLO_SEG,
+	UNI_ALGORITHM_YOLO_SEG,
 	UNI_ALGORITHM_MMCV_SEG,
+	UNI_ALGORITHM_ONNX_SEG,
 };
 
 struct AlgotithmParam
@@ -77,3 +79,5 @@ struct AlgorithmOutput
 	bool _bResult;                // 是否有结果
 	std::vector<Result> _results; // 检测结果
 };
+
+using AlgorithmResultReadyCallback = std::function<void(const AlgorithmInput&, const AlgorithmOutput&)>;

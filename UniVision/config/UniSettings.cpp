@@ -116,7 +116,7 @@ AlgorithmConfig UniSettings::getAlgorithmConfig() const
 	config._gpuIndex = _settings->value("Algorithm/GpuIndex", 0).toInt();
 	config._batchSize = _settings->value("Algorithm/BatchSize", 1).toInt();
 	config._threadNum = _settings->value("Algorithm/ThreadNum", 6).toInt();
-	config._detectType = static_cast<AlgorithmDetectType>(_settings->value("Algorithm/DetectType", 0).toInt());
+	config._detectType = static_cast<AlgorithmDetectType>(_settings->value("Algorithm/DetectType", 1).toInt());
 	config._param._confidenceThreshold = _settings->value("Algorithm/Param.ConfidenceThreshold", 0.5).toFloat();
 	config._param._nmsThreshold = _settings->value("Algorithm/Param.NmsThreshold", 0.4).toFloat();
 

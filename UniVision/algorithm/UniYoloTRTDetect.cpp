@@ -3,27 +3,26 @@
 
 #include "core/UniLog.h"
 
-YoloTRTDetect::YoloTRTDetect(const YoloTRTPara& para, std::unique_ptr<deploy::SegmentModel> _model)
-	: _para(para), _model(std::move(_model))
+YoloTRTDetect::YoloTRTDetect(const YoloTRTPara& para)
+	: _para(para)
 {
 }
 
 YoloTRTDetect::~YoloTRTDetect()
 {
-	_model.reset();
 }
 
-YoloTRTOutput YoloTRTDetect::process_single_image(const cv::Mat& src_img, cv::Mat& dst_img) const
+YoloTRTOutput YoloTRTDetect::process_single_image(deploy::SegmentModel* model, const cv::Mat& src_img, cv::Mat& dst_img) const
 {
     YoloTRTOutput output;
 
 	deploy::Image img(src_img.data, src_img.cols, src_img.rows);
-	deploy::SegmentRes result = _model->predict(img);
+	deploy::SegmentRes result = model->predict(img);
 	dst_img = src_img.clone();
 	visualize(dst_img, result);
 
     output._result = std::move(result);
-	output._performance = _model->performanceReport();
+	output._performance = model->performanceReport();
 	auto [throughput_str, gpu_latency_str, cpu_latency_str] = output._performance;
 	
 	LOG_DEBUG("YoloTRTDetect::process_single_image: {}, {}, {}", throughput_str, gpu_latency_str, cpu_latency_str);
@@ -31,10 +30,10 @@ YoloTRTOutput YoloTRTDetect::process_single_image(const cv::Mat& src_img, cv::Ma
 	return output;
 }
 
-std::vector<YoloTRTOutput> YoloTRTDetect::process_batch_images(const std::vector<cv::Mat>& src_imgs, std::vector<cv::Mat>& dst_imgs) const
+std::vector<YoloTRTOutput> YoloTRTDetect::process_batch_images(deploy::SegmentModel* model, const std::vector<cv::Mat>& src_imgs, std::vector<cv::Mat>& dst_imgs) const
 {
 	std::vector<YoloTRTOutput> outputs;
-    const int batch_size = _model->batch_size();
+    const int batch_size = model->batch_size();
 
 	for (size_t i = 0; i < src_imgs.size(); i += batch_size) {
 		std::vector<cv::Mat>       images;
@@ -45,7 +44,7 @@ std::vector<YoloTRTOutput> YoloTRTDetect::process_batch_images(const std::vector
 			images.push_back(image);
 			img_batch.emplace_back(image.data, image.cols, image.rows);
 		}
-		auto results = _model->predict(img_batch);
+		auto results = model->predict(img_batch);
 		for (size_t j = 0; j < images.size(); ++j) {
 			cv::Mat dst_img = images[j].clone();
 			visualize(dst_img, results[j]);
@@ -54,12 +53,12 @@ std::vector<YoloTRTOutput> YoloTRTDetect::process_batch_images(const std::vector
 		for (size_t j = 0; j < images.size(); ++j) {
 			YoloTRTOutput output;
 			output._result = std::move(results[j]);
-			output._performance = _model->performanceReport();
+			output._performance = model->performanceReport();
 			outputs.push_back(std::move(output));
 
-			//auto [throughput_str, gpu_latency_str, cpu_latency_str] = output._performance;
+			auto [throughput_str, gpu_latency_str, cpu_latency_str] = output._performance;
 
-			//LOG_DEBUG("YoloTRTDetect::process_single_image {}: {}, {}, {}", j, throughput_str, gpu_latency_str, cpu_latency_str);
+			LOG_DEBUG("YoloTRTDetect::process_single_image {}: {}, {}, {}", j, throughput_str, gpu_latency_str, cpu_latency_str);
 		}
 	}
 
@@ -95,7 +94,7 @@ void YoloTRTDetect::visualize(cv::Mat& image, deploy::SegmentRes& result) const
 
         // 创建边界框区域的二值掩码
         cv::Mat box_mask = cv::Mat::zeros(image.size(), CV_8UC1);
-        cv::rectangle(box_mask, cv::Point(box.left, box.top), cv::Point(box.right, box.bottom), cv::Scalar(1), cv::FILLED);
+        cv::rectangle(box_mask, cv::Point(box.left, box.top), cv::Point(box.right, box.bottom), _para._colors[cls], cv::FILLED);
 
         // 将分割掩码与边界框掩码结合
         mask &= box_mask;
