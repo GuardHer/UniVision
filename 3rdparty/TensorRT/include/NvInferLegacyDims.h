@@ -1,26 +1,19 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-FileCopyrightText: Copyright (c) 1993-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-License-Identifier: LicenseRef-NvidiaProprietary
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
+ * property and proprietary rights in and to this material, related
+ * documentation and any modifications thereto. Any use, reproduction,
+ * disclosure or distribution of this material and related documentation
+ * without an express license agreement from NVIDIA CORPORATION or
+ * its affiliates is strictly prohibited.
  */
 
 #ifndef NV_INFER_LEGACY_DIMS_H
 #define NV_INFER_LEGACY_DIMS_H
 
-#define NV_INFER_INTERNAL_INCLUDE 1
-#include "NvInferRuntimeBase.h"
-#undef NV_INFER_INTERNAL_INCLUDE
+#include "NvInferRuntimeCommon.h"
 
 //!
 //! \file NvInferLegacyDims.h
@@ -38,7 +31,6 @@ namespace nvinfer1
 {
 //!
 //! \class Dims2
-//!
 //! \brief Descriptor for two-dimensional data.
 //!
 class Dims2 : public Dims
@@ -58,12 +50,12 @@ public:
     //! \param d0 The first element.
     //! \param d1 The second element.
     //!
-    Dims2(int64_t d0, int64_t d1)
+    Dims2(int32_t d0, int32_t d1)
     {
         nbDims = 2;
         d[0] = d0;
         d[1] = d1;
-        for (int64_t i{nbDims}; i < Dims::MAX_DIMS; ++i)
+        for (int32_t i{nbDims}; i < Dims::MAX_DIMS; ++i)
         {
             d[i] = 0;
         }
@@ -72,7 +64,6 @@ public:
 
 //!
 //! \class DimsHW
-//!
 //! \brief Descriptor for two-dimensional spatial data.
 //!
 class DimsHW : public Dims2
@@ -92,7 +83,7 @@ public:
     //! \param height the height of the data
     //! \param width the width of the data
     //!
-    DimsHW(int64_t height, int64_t width)
+    DimsHW(int32_t height, int32_t width)
         : Dims2(height, width)
     {
     }
@@ -102,7 +93,7 @@ public:
     //!
     //! \return The height.
     //!
-    int64_t& h()
+    int32_t& h()
     {
         return d[0];
     }
@@ -112,7 +103,7 @@ public:
     //!
     //! \return The height.
     //!
-    int64_t h() const
+    int32_t h() const
     {
         return d[0];
     }
@@ -122,7 +113,7 @@ public:
     //!
     //! \return The width.
     //!
-    int64_t& w()
+    int32_t& w()
     {
         return d[1];
     }
@@ -132,7 +123,7 @@ public:
     //!
     //! \return The width.
     //!
-    int64_t w() const
+    int32_t w() const
     {
         return d[1];
     }
@@ -140,7 +131,6 @@ public:
 
 //!
 //! \class Dims3
-//!
 //! \brief Descriptor for three-dimensional data.
 //!
 class Dims3 : public Dims2
@@ -161,7 +151,7 @@ public:
     //! \param d1 The second element.
     //! \param d2 The third element.
     //!
-    Dims3(int64_t d0, int64_t d1, int64_t d2)
+    Dims3(int32_t d0, int32_t d1, int32_t d2)
         : Dims2(d0, d1)
     {
         nbDims = 3;
@@ -171,7 +161,6 @@ public:
 
 //!
 //! \class Dims4
-//!
 //! \brief Descriptor for four-dimensional data.
 //!
 class Dims4 : public Dims3
@@ -193,7 +182,7 @@ public:
     //! \param d2 The third element.
     //! \param d3 The fourth element.
     //!
-    Dims4(int64_t d0, int64_t d1, int64_t d2, int64_t d3)
+    Dims4(int32_t d0, int32_t d1, int32_t d2, int32_t d3)
         : Dims3(d0, d1, d2)
     {
         nbDims = 4;

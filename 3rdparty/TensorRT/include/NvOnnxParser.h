@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2024, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 1993-2023, NVIDIA CORPORATION. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -25,7 +25,6 @@
 
 #include "NvInfer.h"
 #include <stddef.h>
-#include <string>
 #include <vector>
 
 //!
@@ -66,12 +65,12 @@ namespace nvonnxparser
 {
 
 template <typename T>
-constexpr inline int32_t EnumMax() noexcept;
+constexpr inline int32_t EnumMax();
 
 //!
 //! \enum ErrorCode
 //!
-//! \brief The type of error that the parser or refitter may return
+//! \brief The type of error that the parser may return
 //!
 enum class ErrorCode : int
 {
@@ -83,13 +82,7 @@ enum class ErrorCode : int
     kINVALID_GRAPH = 5,
     kINVALID_NODE = 6,
     kUNSUPPORTED_GRAPH = 7,
-    kUNSUPPORTED_NODE = 8,
-    kUNSUPPORTED_NODE_ATTR = 9,
-    kUNSUPPORTED_NODE_INPUT = 10,
-    kUNSUPPORTED_NODE_DATATYPE = 11,
-    kUNSUPPORTED_NODE_DYNAMIC = 12,
-    kUNSUPPORTED_NODE_SHAPE = 13,
-    kREFIT_FAILED = 14
+    kUNSUPPORTED_NODE = 8
 };
 
 //!
@@ -98,9 +91,9 @@ enum class ErrorCode : int
 //! \see ErrorCode
 //!
 template <>
-constexpr inline int32_t EnumMax<ErrorCode>() noexcept
+constexpr inline int32_t EnumMax<ErrorCode>()
 {
-    return 14;
+    return 9;
 }
 
 //!
@@ -114,9 +107,9 @@ using OnnxParserFlags = uint32_t;
 enum class OnnxParserFlag : int32_t
 {
     //! Parse the ONNX model into the INetworkDefinition with the intention of using TensorRT's native layer
-    //! implementation over the plugin implementation for InstanceNormalization nodes.
-    //! This flag is required when building version-compatible or hardware-compatible engines.
-    //! This flag is set to be ON by default.
+    //! implementation over the plugin implementation for InstanceNormalization nodes. This flag is planned to be
+    //! deprecated in TensorRT 8.7 and removed in TensorRT 9.0. This flag is required when building version-compatible
+    //! or hardware-compatible engines. There may be performance degradations when this flag is enabled.
     kNATIVE_INSTANCENORM = 0
 };
 
@@ -126,7 +119,7 @@ enum class OnnxParserFlag : int32_t
 //! \see OnnxParserFlag
 //!
 template <>
-constexpr inline int32_t EnumMax<OnnxParserFlag>() noexcept
+constexpr inline int32_t EnumMax<OnnxParserFlag>()
 {
     return 1;
 }
@@ -140,49 +133,29 @@ class IParserError
 {
 public:
     //!
-    //!\brief the error code.
+    //!\brief the error code
     //!
     virtual ErrorCode code() const = 0;
     //!
-    //!\brief description of the error.
+    //!\brief description of the error
     //!
-    virtual char const* desc() const = 0;
+    virtual const char* desc() const = 0;
     //!
-    //!\brief source file in which the error occurred.
+    //!\brief source file in which the error occurred
     //!
-    virtual char const* file() const = 0;
+    virtual const char* file() const = 0;
     //!
-    //!\brief source line at which the error occurred.
+    //!\brief source line at which the error occurred
     //!
     virtual int line() const = 0;
     //!
-    //!\brief source function in which the error occurred.
+    //!\brief source function in which the error occurred
     //!
-    virtual char const* func() const = 0;
+    virtual const char* func() const = 0;
     //!
-    //!\brief index of the ONNX model node in which the error occurred.
+    //!\brief index of the ONNX model node in which the error occurred
     //!
     virtual int node() const = 0;
-    //!
-    //!\brief name of the node in which the error occurred.
-    //!
-    virtual char const* nodeName() const = 0;
-    //!
-    //!\brief name of the node operation in which the error occurred.
-    //!
-    virtual char const* nodeOperator() const = 0;
-    //!
-    //!\brief A list of the local function names, from the top level down, constituting the current
-    //!             stack trace in which the error occurred. A top-level node that is not inside any
-    //!             local function would return a nullptr.
-    //!
-    virtual char const* const* localFunctionStack() const = 0;
-    //!
-    //!\brief The size of the stack of local functions at the point where the error occurred.
-    //!             A top-level node that is not inside any local function would correspond to
-    //              a stack size of 0.
-    //!
-    virtual int32_t localFunctionStackSize() const = 0;
 
 protected:
     virtual ~IParserError() {}
@@ -192,8 +165,6 @@ protected:
 //! \class IParser
 //!
 //! \brief an object for parsing ONNX models into a TensorRT network definition
-//!
-//! \warning Do not inherit from this class, as doing so will break forward-compatibility of the API and ABI.
 //!
 class IParser
 {
@@ -213,7 +184,7 @@ public:
     //! \see getNbErrors() getError()
     //!
     virtual bool parse(
-        void const* serialized_onnx_model, size_t serialized_onnx_model_size, const char* model_path = nullptr) noexcept
+        void const* serialized_onnx_model, size_t serialized_onnx_model_size, const char* model_path = nullptr)
         = 0;
 
     //!
@@ -226,13 +197,12 @@ public:
     //! \return true if the model was parsed successfully
     //!
     //!
-    virtual bool parseFromFile(const char* onnxModelFile, int verbosity) noexcept = 0;
+    virtual bool parseFromFile(const char* onnxModelFile, int verbosity) = 0;
 
-    //! [DEPRECATED] Deprecated in TensorRT 10.1. See supportsModelV2.
     //!
-    //! \brief Check whether TensorRT supports a particular ONNX model.
-    //!        If the function returns True, one can proceed to engine building
-    //!        without having to call \p parse or \p parseFromFile.
+    //!\brief Check whether TensorRT supports a particular ONNX model.
+    //! 	       If the function returns True, one can proceed to engine building
+    //! 	       without having to call \p parse or \p parseFromFile.
     //!
     //! \param serialized_onnx_model Pointer to the serialized ONNX model
     //! \param serialized_onnx_model_size Size of the serialized ONNX model
@@ -241,8 +211,9 @@ public:
     //! \param model_path Absolute path to the model file for loading external weights if required
     //! \return true if the model is supported
     //!
-    TRT_DEPRECATED virtual bool supportsModel(void const* serialized_onnx_model, size_t serialized_onnx_model_size,
-        SubGraphCollection_t& sub_graph_collection, const char* model_path = nullptr) noexcept = 0;
+    virtual bool supportsModel(void const* serialized_onnx_model, size_t serialized_onnx_model_size,
+        SubGraphCollection_t& sub_graph_collection, const char* model_path = nullptr)
+        = 0;
 
     //!
     //!\brief Parse a serialized ONNX model into the TensorRT network
@@ -254,9 +225,7 @@ public:
     //! \return true if the model was parsed successfully
     //! \see getNbErrors() getError()
     //!
-    virtual bool parseWithWeightDescriptors(
-        void const* serialized_onnx_model, size_t serialized_onnx_model_size) noexcept
-        = 0;
+    virtual bool parseWithWeightDescriptors(void const* serialized_onnx_model, size_t serialized_onnx_model_size) = 0;
 
     //!
     //!\brief Returns whether the specified operator may be supported by the
@@ -267,7 +236,14 @@ public:
     //!
     //! \param op_name The name of the ONNX operator to check for support
     //!
-    virtual bool supportsOperator(const char* op_name) const noexcept = 0;
+    virtual bool supportsOperator(const char* op_name) const = 0;
+
+    //!
+    //!\brief destroy this object
+    //!
+    //! \warning deprecated and planned on being removed in TensorRT 10.0
+    //!
+    TRT_DEPRECATED virtual void destroy() = 0;
 
     //!
     //!\brief Get the number of errors that occurred during prior calls to
@@ -275,21 +251,21 @@ public:
     //!
     //! \see getError() clearErrors() IParserError
     //!
-    virtual int getNbErrors() const noexcept = 0;
+    virtual int getNbErrors() const = 0;
 
     //!
     //!\brief Get an error that occurred during prior calls to \p parse
     //!
     //! \see getNbErrors() clearErrors() IParserError
     //!
-    virtual IParserError const* getError(int index) const noexcept = 0;
+    virtual IParserError const* getError(int index) const = 0;
 
     //!
     //!\brief Clear errors from prior calls to \p parse
     //!
     //! \see getNbErrors() getError() IParserError
     //!
-    virtual void clearErrors() noexcept = 0;
+    virtual void clearErrors() = 0;
 
     virtual ~IParser() noexcept = default;
 
@@ -359,136 +335,12 @@ public:
     //! \return True if flag is set, false if unset.
     //!
     virtual bool getFlag(OnnxParserFlag onnxParserFlag) const noexcept = 0;
-
-    //!
-    //!\brief Return the i-th output ITensor object for the ONNX layer "name".
-    //!
-    //! Return the i-th output ITensor object for the ONNX layer "name".
-    //! If "name" is not found or i is out of range, return nullptr.
-    //! In the case of multiple nodes sharing the same name this function will return
-    //! the output tensors of the first instance of the node in the ONNX graph.
-    //!
-    //! \param name The name of the ONNX layer.
-    //!
-    //! \param i The index of the output. i must be in range [0, layer.num_outputs).
-    //!
-    virtual nvinfer1::ITensor const* getLayerOutputTensor(char const* name, int64_t i) noexcept = 0;
-
-    //!
-    //! \brief Check whether TensorRT supports a particular ONNX model.
-    //!            If the function returns True, one can proceed to engine building
-    //!            without having to call \p parse or \p parseFromFile.
-    //!            Results can be queried through \p getNbSubgraphs, \p isSubgraphSupported,
-    //!            \p getSubgraphNodes.
-    //!
-    //! \param serializedOnnxModel Pointer to the serialized ONNX model
-    //! \param serializedOnnxModelSize Size of the serialized ONNX model in bytes
-    //! \param modelPath Absolute path to the model file for loading external weights if required
-    //! \return true if the model is supported
-    //!
-    virtual bool supportsModelV2(
-        void const* serializedOnnxModel, size_t serializedOnnxModelSize, char const* modelPath = nullptr) noexcept = 0;
-
-    //!
-    //! \brief Get the number of subgraphs. Calling this function before calling \p supportsModelV2 results in undefined
-    //! behavior.
-    //!
-    //!
-    //! \return Number of subgraphs.
-    //!
-    virtual int64_t getNbSubgraphs() noexcept = 0;
-
-    //!
-    //! \brief Returns whether the subgraph is supported. Calling this function before calling \p supportsModelV2
-    //! results in undefined behavior.
-    //!
-    //!
-    //! \param index Index of the subgraph.
-    //! \return Whether the subgraph is supported.
-    //!
-    virtual bool isSubgraphSupported(int64_t const index) noexcept = 0;
-
-    //!
-    //! \brief Get the nodes of the specified subgraph. Calling this function before calling \p supportsModelV2 results
-    //! in undefined behavior.
-    //!
-    //!
-    //! \param index Index of the subgraph.
-    //! \param subgraphLength Returns the length of the subgraph as reference.
-    //!
-    //! \return Pointer to the subgraph nodes array. This pointer is owned by the Parser.
-    //!
-    virtual int64_t* getSubgraphNodes(int64_t const index, int64_t& subgraphLength) noexcept = 0;
-};
-
-//!
-//! \class IParserRefitter
-//!
-//! \brief An interface designed to refit weights from an ONNX model.
-//!
-//! \warning Do not inherit from this class, as doing so will break forward-compatibility of the API and ABI.
-//!
-class IParserRefitter
-{
-public:
-    //!
-    //! \brief Load a serialized ONNX model from memory and perform weight refit.
-    //!
-    //! \param serializedOnnxModel Pointer to the serialized ONNX model
-    //! \param serializedOnnxModelSize Size of the serialized ONNX model
-    //!        in bytes
-    //! \param modelPath Absolute path to the model file for loading external weights if required
-    //! \return true if all the weights in the engine were refit successfully.
-    //!
-    //! The serialized ONNX model must be identical to the one used to generate the engine
-    //! that will be refit.
-    //!
-    virtual bool refitFromBytes(
-        void const* serializedOnnxModel, size_t serializedOnnxModelSize, char const* modelPath = nullptr) noexcept
-        = 0;
-
-    //!
-    //! \brief Load and parse a ONNX model from disk and perform weight refit.
-    //!
-    //! \param onnxModelFile Path to the ONNX model to load from disk.
-    //!
-    //! \return true if the model was loaded successfully, and if all the weights in the engine were refit successfully.
-    //!
-    //! The provided ONNX model must be identical to the one used to generate the engine
-    //! that will be refit.
-    //!
-    virtual bool refitFromFile(char const* onnxModelFile) noexcept = 0;
-
-    //!
-    //!\brief Get the number of errors that occurred during prior calls to \p refitFromBytes or \p refitFromFile
-    //!
-    //! \see getError() IParserError
-    //!
-    virtual int32_t getNbErrors() const noexcept = 0;
-
-    //!
-    //!\brief Get an error that occurred during prior calls to \p refitFromBytes or \p refitFromFile
-    //!
-    //! \see getNbErrors() IParserError
-    //!
-    virtual IParserError const* getError(int32_t index) const noexcept = 0;
-
-    //!
-    //!\brief Clear errors from prior calls to \p refitFromBytes or \p refitFromFile
-    //!
-    //! \see getNbErrors() getError() IParserError
-    //!
-    virtual void clearErrors() = 0;
-
-    virtual ~IParserRefitter() noexcept = default;
 };
 
 } // namespace nvonnxparser
 
-extern "C" TENSORRTAPI void* createNvOnnxParser_INTERNAL(void* network, void* logger, int version) noexcept;
-extern "C" TENSORRTAPI void* createNvOnnxParserRefitter_INTERNAL(
-    void* refitter, void* logger, int32_t version) noexcept;
-extern "C" TENSORRTAPI int getNvOnnxParserVersion() noexcept;
+extern "C" TENSORRTAPI void* createNvOnnxParser_INTERNAL(void* network, void* logger, int version);
+extern "C" TENSORRTAPI int getNvOnnxParserVersion();
 
 namespace nvonnxparser
 {
@@ -511,42 +363,9 @@ namespace
 //!
 //! \see IParser
 //!
-inline IParser* createParser(nvinfer1::INetworkDefinition& network, nvinfer1::ILogger& logger) noexcept
+inline IParser* createParser(nvinfer1::INetworkDefinition& network, nvinfer1::ILogger& logger)
 {
-    try
-    {
-        return static_cast<IParser*>(createNvOnnxParser_INTERNAL(&network, &logger, NV_ONNX_PARSER_VERSION));
-    }
-    catch (std::exception& e)
-    {
-        logger.log(nvinfer1::ILogger::Severity::kINTERNAL_ERROR, e.what());
-    }
-
-    return nullptr;
-}
-
-//!
-//! \brief Create a new ONNX refitter object
-//!
-//! \param refitter The Refitter object used to refit the model
-//! \param logger The logger to use
-//! \return a new ParserRefitter object or NULL if an error occurred
-//!
-//! \see IParserRefitter
-//!
-inline IParserRefitter* createParserRefitter(nvinfer1::IRefitter& refitter, nvinfer1::ILogger& logger) noexcept
-{
-    try
-    {
-        return static_cast<IParserRefitter*>(
-            createNvOnnxParserRefitter_INTERNAL(&refitter, &logger, NV_ONNX_PARSER_VERSION));
-    }
-    catch (std::exception& e)
-    {
-        logger.log(nvinfer1::ILogger::Severity::kINTERNAL_ERROR, e.what());
-    }
-
-    return nullptr;
+    return static_cast<IParser*>(createNvOnnxParser_INTERNAL(&network, &logger, NV_ONNX_PARSER_VERSION));
 }
 
 } // namespace
