@@ -51,6 +51,9 @@
     <Filter Include="Algorithm\detect">
       <UniqueIdentifier>{8c118ad0-bf5d-47a8-a655-4a028b80f829}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Algorithm\model">
+      <UniqueIdentifier>{ca20d703-c3fc-4f0f-9d60-8fb9a71df9c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="UniVision.qrc">
@@ -124,6 +127,21 @@
     <ClCompile Include="algorithm\UniAlgorithmUtils.cpp">
       <Filter>Algorithm</Filter>
     </ClCompile>
+    <ClCompile Include="page\UniLogPage.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
+    <ClCompile Include="page\UniSettingPage.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\UniOnnxModel.cpp">
+      <Filter>Algorithm\model</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\UniPureOnnxDetect.cpp">
+      <Filter>Algorithm\detect</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\UniBaseOnnxDetect.cpp">
+      <Filter>Algorithm\detect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="extended\UniElaToggleButton.h">
@@ -155,6 +173,12 @@
     </QtMoc>
     <QtMoc Include="extended\UniElaText.h">
       <Filter>Extended controls</Filter>
+    </QtMoc>
+    <QtMoc Include="page\UniLogPage.h">
+      <Filter>page</Filter>
+    </QtMoc>
+    <QtMoc Include="page\UniSettingPage.h">
+      <Filter>page</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +217,18 @@
     </ClInclude>
     <ClInclude Include="algorithm\UniAlgorithmUtils.h">
       <Filter>Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="config\UniSaveConfig.h">
+      <Filter>conf</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\UniOnnxModel.h">
+      <Filter>Algorithm\model</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\UniPureOnnxDetect.h">
+      <Filter>Algorithm\detect</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\UniBaseOnnxDetect.h">
+      <Filter>Algorithm\detect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

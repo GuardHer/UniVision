@@ -33,14 +33,25 @@ UniLog::~UniLog()
 {
 }
 
-void UniLog::init(spdlog::custom_log_callback cb)
+void UniLog::Callback(const spdlog::details::log_msg& msg)
+{
+    std::string message = std::string(msg.payload.data(), msg.payload.size());
+
+	if (_callback)
+    {
+		_callback(message);
+	}
+}
+
+void UniLog::init()
 {
     try
     {
-        auto config = UNI_SETTINGS->getLogConfig();
+        auto config = g_pSettings->getLogConfig();
 
         std::vector<spdlog::sink_ptr> vecSinks;
 
+		auto cb = std::bind(&UniLog::Callback, this, std::placeholders::_1);
         auto cb_sink = std::make_shared<spdlog::sinks::callback_sink_mt>(std::move(cb));
         cb_sink->set_level(static_cast<spdlog::level::level_enum>(config._level));
         vecSinks.push_back(cb_sink);

@@ -29,15 +29,15 @@
 #include "extended/UniElaToggleButton.h"
 #include "extended/UniElaText.h"
 #include "page/UniMasterPage.h"
+#include "page/UniLogPage.h"
+#include "page/UniSettingPage.h"
 #include "config/UniSettings.h"
 #include "core/UniLog.h"
 
 UniVision::UniVision(QWidget *parent)
     : ElaWindow(parent)
 {
-	g_pLog->init([](const spdlog::details::log_msg& msg) {
-		//std::cout << std::string(msg.payload.data(), msg.payload.size()) << std::endl;
-	});
+	g_pLog->init();
     
 	initWindow();
 
@@ -110,7 +110,7 @@ void UniVision::initEdgeLayout()
     _toolBar->addSeparator();
 	_selectCameras = new ElaMultiSelectComboBox(this);
     std::vector<CameraConfig> cameraConfigs;
-    UNI_SETTINGS->getCameraConfigs(cameraConfigs);
+    g_pSettings->getCameraConfigs(cameraConfigs);
 	for (const auto& config : cameraConfigs) {
 		_selectCameras->addItem(QString::fromStdString(config._cameraName));
 	}
@@ -171,13 +171,24 @@ void UniVision::initContent()
 {
     _masterPage = new UniMasterPage(this);
     addPageNode("MASTER", _masterPage, ElaIconType::House);
+
+	_logPage = new UniLogPage(u8"日志", this);
+	auto cb = std::bind(&UniLogPage::appendLog, _logPage, std::placeholders::_1);
+	g_pLog->setLogCallback(cb);
+	this->addDockWidget(Qt::RightDockWidgetArea, _logPage);
+	resizeDocks({ _logPage }, { 400 }, Qt::Horizontal);
+
+	_settingPage = new UniSettingPage(this);
+	QString settingKey;
+	addFooterNode("Setting", _settingPage, settingKey, 0, ElaIconType::GearComplex);
+	_settingPage->setSettingKey(settingKey);
 }
 
 void UniVision::initDevice()
 {
     // init camera
 	std::vector<CameraConfig> cameraConfigs;
-    UNI_SETTINGS->getCameraConfigs(cameraConfigs);
+    g_pSettings->getCameraConfigs(cameraConfigs);
 
 	for (const auto& config : cameraConfigs) {
 		g_pUniCameraManager->addCamera(config);
@@ -222,7 +233,7 @@ void UniVision::onRun(bool checked)
 	AppStateManager::instance()->requestRun();
 
     std::vector<CameraConfig> cameraConfigs;
-    UNI_SETTINGS->getCameraConfigs(cameraConfigs);
+    g_pSettings->getCameraConfigs(cameraConfigs);
 
     for (const auto& config : cameraConfigs) {
         const std::string& camera_key = g_pUniCameraManager->generateCameraKey(config);
@@ -239,7 +250,7 @@ void UniVision::onStop(bool checked)
 	AppStateManager::instance()->emergencyStop();
 
 	std::vector<CameraConfig> cameraConfigs;
-	UNI_SETTINGS->getCameraConfigs(cameraConfigs);
+	g_pSettings->getCameraConfigs(cameraConfigs);
 	for (const auto& config : cameraConfigs) {
         const std::string& camera_key = g_pUniCameraManager->generateCameraKey(config);
 
@@ -283,7 +294,7 @@ void UniVision::onSimSingleTrigger(bool checked)
 	}
 
 	std::vector<CameraConfig> cameraConfigs;
-	UNI_SETTINGS->getCameraConfigs(cameraConfigs);
+	g_pSettings->getCameraConfigs(cameraConfigs);
 
     QStringList selectedCameras = _selectCameras->getCurrentSelection();
 
@@ -314,7 +325,7 @@ void UniVision::onSimTriggerTimeout()
 	}
 
 	std::vector<CameraConfig> cameraConfigs;
-	UNI_SETTINGS->getCameraConfigs(cameraConfigs);
+	g_pSettings->getCameraConfigs(cameraConfigs);
 
 	QStringList selectedCameras = _selectCameras->getCurrentSelection();
 

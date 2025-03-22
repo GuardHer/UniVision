@@ -6,10 +6,11 @@
 #include "config/UniCameraConfig.h"
 #include "config/UniAlgorithmConfig.h"
 #include "config/UniLogConfig.h"
+#include "config/UniSaveConfig.h"
 
 class QSettings;
 
-#define UNI_SETTINGS UniSettings::instance()
+#define g_pSettings UniSettings::instance()
 
 class UniSettings : public QObject
 {
@@ -58,10 +59,22 @@ public:
 	AlgorithmConfig getAlgorithmConfig() const;
 
 	/// <summary>
-	/// 
+	/// 保存算法配置
 	/// </summary>
 	/// <param name="config"></param>
 	void setAlgorithmConfig(const AlgorithmConfig& config);
+
+	/// <summary>
+	/// 获取保存配置
+	/// </summary>
+	/// <returns></returns>
+	UniSaveConfig getSaveConfig() const;
+
+	/// <summary>
+	/// 保存保存配置
+	/// </summary>
+	/// <param name="config"></param>
+	void setSaveConfig(const UniSaveConfig& config);
 
 private:
 	UniSettings(QObject* parent = nullptr);

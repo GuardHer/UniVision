@@ -7,7 +7,9 @@
 #include "config/UniAlgorithmConfig.h"
 
 class ThreadPool;
+class UniBaseOnnxDetect;
 class YoloSegOnnxDetect;
+class UniPureOnnxDetect;
 
 #define g_pUniAlgorithm UniAlgorithm::instance()
 class UniAlgorithm
@@ -31,7 +33,7 @@ private:
 	static UniAlgorithm* _instance;
 	static std::mutex _mutex;
 	std::unique_ptr<deploy::SegmentModel> _modelTRT;
-	std::unique_ptr<YoloSegOnnxDetect> _modelOnnx;
+        std::unique_ptr<UniBaseOnnxDetect> _modelOnnx;
 
 
 	std::mutex _mutexDetect;

@@ -8,18 +8,27 @@
 class UniLog
 {
 public:
-	static UniLog* instance();
+	using LogCallback = std::function<void(const std::string& msg)>;
 
-	void init(spdlog::custom_log_callback cb);
+public:
+	static UniLog* instance();
+	void init();
+
+	void setLogCallback(const LogCallback& callback) { _callback = callback; }
 
 private:
 	UniLog();
 	~UniLog();
 
+	void Callback(const spdlog::details::log_msg& msg);
+
 private:
 	static UniLog* _instance;
 	static std::mutex _mutex;
+
+	LogCallback _callback;
 };
+
 
 #define LOG_TRACE(...) spdlog::trace(__VA_ARGS__)
 #define LOG_DEBUG(...) spdlog::debug(__VA_ARGS__)

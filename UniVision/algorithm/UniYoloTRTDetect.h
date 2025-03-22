@@ -13,7 +13,6 @@ struct YoloTRTPara
 {
 	std::vector<std::string> _labels; // 标签
 	std::vector<cv::Scalar> _colors;  //class color
-	std::string _enginePath;          // 模型路径
 	float _confidenceThreshold{ 0.5f }; // 置信度阈值
 };
 

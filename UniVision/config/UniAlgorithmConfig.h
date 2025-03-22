@@ -2,34 +2,165 @@
 
 #include <string>
 #include <vector>
+#include <sstream>
+#include <filesystem>
 #include <unordered_map>
 #include <functional>
 
 #include <opencv2/opencv.hpp>
 
+#include "core/UniLog.h"
+
 enum class AlgorithmDetectType : int
 {
-	UNI_ALGORITHM_YOLO_SEG,
-	UNI_ALGORITHM_MMCV_SEG,
-	UNI_ALGORITHM_ONNX_SEG,
+	YOLO_TRT_SEG,
+	YOLO_ONNX_SEG,
+    PURE_ONNX_SEG,
 };
+
+inline std::string AlgorithmDetectTypeToString(AlgorithmDetectType type)
+{
+	switch (type)
+	{
+	case AlgorithmDetectType::YOLO_TRT_SEG:
+		return "YOLO-TensorRT";
+	case AlgorithmDetectType::YOLO_ONNX_SEG:
+		return "YOLO-ONNX";
+	case AlgorithmDetectType::PURE_ONNX_SEG:
+		return "PURE_ONNX";
+	default:
+		return "Unknown";
+	}
+}
+
+
+inline std::vector<std::string> AlgorithmDetectTypeToStrings()
+{
+	std::vector<std::string> list;
+	list.push_back(AlgorithmDetectTypeToString(AlgorithmDetectType::YOLO_TRT_SEG));
+	list.push_back(AlgorithmDetectTypeToString(AlgorithmDetectType::YOLO_ONNX_SEG));
+	list.push_back(AlgorithmDetectTypeToString(AlgorithmDetectType::PURE_ONNX_SEG));
+	
+	return list;
+}
+
+
+inline AlgorithmDetectType StringToAlgorithmDetectType(const std::string& str)
+{
+	if (str == "YOLO-TensorRT")
+	{
+		return AlgorithmDetectType::YOLO_TRT_SEG;
+	}
+	else if (str == "YOLO-ONNX")
+	{
+		return AlgorithmDetectType::YOLO_ONNX_SEG;
+	}
+	else if (str == "PURE_ONNX")
+	{
+		return AlgorithmDetectType::PURE_ONNX_SEG;
+	}
+	else
+	{
+		return AlgorithmDetectType::YOLO_TRT_SEG;
+	}
+}
+
+template <typename T>
+inline std::string VectorToString(const std::vector<T>& vec)
+{
+	std::stringstream ss;
+	for (size_t i = 0; i < vec.size(); ++i)
+	{
+		ss << vec[i];
+		if (i < vec.size() - 1)
+		{
+			ss << ",";
+		}
+	}
+	return ss.str();
+}
+
+
+template<typename T>
+inline std::vector<T> StringToVector(const std::string& str)
+{
+	if (str.empty())
+	{
+		return std::vector<T>();
+	}
+
+	// int 
+	if constexpr (std::is_same_v<T, int>)
+	{
+		std::vector<T> vec;
+		std::stringstream ss(str);
+		std::string item;
+		while (std::getline(ss, item, ','))
+		{
+			vec.push_back(std::stoi(item));
+		}
+		return vec;
+	}
+
+	// float
+	if constexpr (std::is_same_v<T, float>)
+	{
+		std::vector<T> vec;
+		std::stringstream ss(str);
+		std::string item;
+		while (std::getline(ss, item, ','))
+		{
+			vec.push_back(std::stof(item));
+		}
+		return vec;
+	}
+
+	// double
+	if constexpr (std::is_same_v<T, double>)
+	{
+		std::vector<T> vec;
+		std::stringstream ss(str);
+		std::string item;
+		while (std::getline(ss, item, ','))
+		{
+			vec.push_back(std::stod(item));
+		}
+		return vec;
+	}
+
+	// std::string
+    if constexpr (std::is_same_v<T, std::string>) {
+            std::vector<T> vec;
+            std::stringstream ss(str);
+            std::string item;
+            while (std::getline(ss, item, ',')) {
+                    vec.push_back(item);
+            }
+            return vec;
+    }
+}
+
+
 
 struct AlgotithmParam
 {
 	float _confidenceThreshold{ 0.5f }; // 置信度阈值
 	float _nmsThreshold{ 0.4f };        // NMS阈值
+
+	std::vector<float> _meanValues;     // 均值
+	std::vector<float> _stdValues;      // 标准差
+	std::vector<int> _minArea;      // 最小面积
 };
 
 struct AlgorithmConfig
 {
 	std::string _algorithmName; // 算法名称
-	std::string _engineModelPath;     // 模型路径
-	std::string _onnxModelPath;     // 模型路径
+	std::string _modelPath;     // 模型路径
+	std::string _modelName;     // 模型名称
 	std::string _labelPath;     // 标签路径
-	bool _enableCuda{ true };    // 是否启用CUDA
-	size_t _gpuIndex{ 0 };       // GPU索引
-	size_t _batchSize{ 1 };      // 批处理大小
-	size_t _threadNum{ 6 };      // 线程数量
+	bool _enableCuda{ true };   // 是否启用 CUDA
+	size_t _gpuIndex{ 0 };      // GPU索引
+	size_t _threadNum{ 6 };     // 线程数量
 	AlgorithmDetectType _detectType; // 算法类型
 
 	AlgotithmParam _param;      // 算法参数
@@ -38,16 +169,59 @@ struct AlgorithmConfig
 	AlgorithmConfig& operator=(const AlgorithmConfig& other)
 	{
 		_algorithmName = other._algorithmName;
-		_engineModelPath = other._engineModelPath;
-		_onnxModelPath = other._onnxModelPath;
+		_modelPath = other._modelPath;
+		_modelName = other._modelName;
 		_labelPath = other._labelPath;
 		_enableCuda = other._enableCuda;
 		_gpuIndex = other._gpuIndex;
-		_batchSize = other._batchSize;
 		_threadNum = other._threadNum;
 		_detectType = other._detectType;
 		_param = other._param;
 		return *this;
+	}
+
+	std::vector<std::string> getVecModelName() const
+	{
+		std::vector<std::string> vecModelName;
+
+		if (_modelName.empty()) {
+			return vecModelName;
+		}
+
+		std::stringstream ss(_modelName);
+		std::string filename;
+
+		// 分割逗号分隔的字符串
+		while (std::getline(ss, filename, ',')) {
+			filename.erase(0, filename.find_first_not_of(" \t"));
+			filename.erase(filename.find_last_not_of(" \t") + 1);
+
+			if (filename.empty()) {
+				continue;
+			}
+
+			try {
+				std::string fullPath = (std::filesystem::path(_modelPath) / filename).string();
+				vecModelName.push_back(fullPath);
+			}
+			catch (const std::filesystem::filesystem_error& e) {
+				LOG_ERROR("Failed to get model name: {}", e.what());
+				continue; 
+			}
+		}
+
+		// 如果没有有效文件名，检查是否 _modelName 本身是一个文件名
+		if (vecModelName.empty() && !_modelName.empty()) {
+			try {
+				std::string fullPath = (std::filesystem::path(_modelPath) / _modelName).string();
+				vecModelName.push_back(fullPath);
+			}
+			catch (const std::filesystem::filesystem_error& e) {
+				LOG_ERROR("Failed to get model name: {}", e.what());
+			}
+		}
+
+		return vecModelName;
 	}
 };
 

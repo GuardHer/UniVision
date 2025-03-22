@@ -23,7 +23,7 @@ UniAlgorithmManager* UniAlgorithmManager::instance()
 
 UniAlgorithmManager::UniAlgorithmManager()
 {
-	auto config = UNI_SETTINGS->getAlgorithmConfig();
+	auto config = g_pSettings->getAlgorithmConfig();
 	//_threadPool.setMaxThreadCount(config._threadNum);
 
 	_uniThreadPoolPtr = std::make_unique<UniThreadPool>(config._threadNum);
@@ -36,7 +36,7 @@ UniAlgorithmManager::~UniAlgorithmManager()
 
 void UniAlgorithmManager::init()
 {
-	auto config = UNI_SETTINGS->getAlgorithmConfig();
+	auto config = g_pSettings->getAlgorithmConfig();
 
 	// 初始化算法
 	g_pUniAlgorithm->init(config);

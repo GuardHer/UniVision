@@ -23,7 +23,7 @@ UniMasterPage::UniMasterPage(QWidget* parent)
 void UniMasterPage::initViews()
 {
 	std::vector<CameraConfig> configs;
-	UNI_SETTINGS->getCameraConfigs(configs);
+	g_pSettings->getCameraConfigs(configs);
 
 	for (int i = 0; i < configs.size(); i++)
 	{

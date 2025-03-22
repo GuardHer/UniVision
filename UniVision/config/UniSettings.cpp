@@ -7,6 +7,7 @@ std::mutex UniSettings::_mutex;
 UniSettings* UniSettings::_instance = nullptr;
 
 
+
 UniSettings::UniSettings(QObject* parent)
 	: QObject(parent)
 {
@@ -109,14 +110,13 @@ AlgorithmConfig UniSettings::getAlgorithmConfig() const
 {
 	AlgorithmConfig config;
 	config._algorithmName = _settings->value("Algorithm/AlgorithmName", "Yolo").toString().toStdString();
-	config._engineModelPath = _settings->value("Algorithm/EngineModelPath", qApp->applicationDirPath() + "/conf/Algorithm/model/model_yolo.engine").toString().toStdString();
-	config._onnxModelPath = _settings->value("Algorithm/OnnxModelPath", qApp->applicationDirPath() + "/conf/Algorithm/model/model_yolo.onnx").toString().toStdString();
+	config._modelPath = _settings->value("Algorithm/ModelPath", qApp->applicationDirPath() + "/conf/Algorithm/model").toString().toStdString();
+	config._modelName = _settings->value("Algorithm/ModelName", "model_yolo.engine").toString().toStdString();
 	config._labelPath = _settings->value("Algorithm/LabelPath", qApp->applicationDirPath() + "/conf/Algorithm/label/classes.txt").toString().toStdString();
 	config._enableCuda = _settings->value("Algorithm/EnableCuda", true).toBool();
 	config._gpuIndex = _settings->value("Algorithm/GpuIndex", 0).toInt();
-	config._batchSize = _settings->value("Algorithm/BatchSize", 1).toInt();
 	config._threadNum = _settings->value("Algorithm/ThreadNum", 6).toInt();
-	config._detectType = static_cast<AlgorithmDetectType>(_settings->value("Algorithm/DetectType", 1).toInt());
+	config._detectType = static_cast<AlgorithmDetectType>(_settings->value("Algorithm/DetectType", 0).toInt());
 	config._param._confidenceThreshold = _settings->value("Algorithm/Param.ConfidenceThreshold", 0.5).toFloat();
 	config._param._nmsThreshold = _settings->value("Algorithm/Param.NmsThreshold", 0.4).toFloat();
 
@@ -126,15 +126,33 @@ AlgorithmConfig UniSettings::getAlgorithmConfig() const
 void UniSettings::setAlgorithmConfig(const AlgorithmConfig& config)
 {
 	_settings->setValue("Algorithm/AlgorithmName", QString::fromStdString(config._algorithmName));
-	_settings->setValue("Algorithm/EngineModelPath", QString::fromStdString(config._engineModelPath));
-	_settings->setValue("Algorithm/OnnxModelPath", QString::fromStdString(config._onnxModelPath));
+	_settings->setValue("Algorithm/ModelPath", QString::fromStdString(config._modelPath));
+	_settings->setValue("Algorithm/ModelName", QString::fromStdString(config._modelName));
 	_settings->setValue("Algorithm/LabelPath", QString::fromStdString(config._labelPath));
 	_settings->setValue("Algorithm/EnableCuda", QVariant::fromValue(config._enableCuda));
 	_settings->setValue("Algorithm/GpuIndex", QVariant::fromValue(config._gpuIndex));
-	_settings->setValue("Algorithm/BatchSize", QVariant::fromValue(config._batchSize));
 	_settings->setValue("Algorithm/ThreadNum", QVariant::fromValue(config._threadNum));
 	_settings->setValue("Algorithm/DetectType", QVariant::fromValue(static_cast<int>(config._detectType)));
 	_settings->setValue("Algorithm/Param.ConfidenceThreshold", QVariant::fromValue(config._param._confidenceThreshold));
 	_settings->setValue("Algorithm/Param.NmsThreshold", QVariant::fromValue(config._param._nmsThreshold));
+	_settings->sync();
+}
+
+UniSaveConfig UniSettings::getSaveConfig() const
+{
+	UniSaveConfig config;
+	config._isSvaeOriginalImage = _settings->value("Save/IsSaveOriginalImage", false).toBool();
+	config._isSaveResultImage = _settings->value("Save/IsSaveResultImage", false).toBool();
+	config._saveOriginalImageDir = _settings->value("Save/SaveOriginalImageDir", qApp->applicationDirPath() + "/Image/Original").toString().toStdString();
+	config._saveResultImageDir = _settings->value("Save/SaveResultImageDir", qApp->applicationDirPath() + "/Image/Result").toString().toStdString();
+	return config;
+}
+
+void UniSettings::setSaveConfig(const UniSaveConfig& config)
+{
+	_settings->setValue("Save/IsSaveOriginalImage", QVariant::fromValue(config._isSvaeOriginalImage));
+	_settings->setValue("Save/IsSaveResultImage", QVariant::fromValue(config._isSaveResultImage));
+	_settings->setValue("Save/SaveOriginalImageDir", QString::fromStdString(config._saveOriginalImageDir));
+	_settings->setValue("Save/SaveResultImageDir", QString::fromStdString(config._saveResultImageDir));
 	_settings->sync();
 }

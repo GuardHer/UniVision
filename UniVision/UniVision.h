@@ -11,6 +11,7 @@
 class QTimer;
 class ElaText;
 class UniElaText;
+class UniLogPage;
 class ElaSpinBox;
 class ElaToolBar;
 class ElaStatusBar;
@@ -20,6 +21,7 @@ class UniElaToggleButton;
 class ElaMultiSelectComboBox;
 
 class UniMasterPage;
+class UniSettingPage;
 
 class UniVision : public ElaWindow
 {
@@ -65,8 +67,12 @@ private:
 	ElaToolButton* _runButton{ nullptr };
 	ElaToolButton* _stopButton{ nullptr };
     UniElaToggleButton* _statusButton{ nullptr };
-    UniMasterPage* _masterPage{ nullptr };
 	ElaStatusBar* _statusBar{ nullptr };
+
+	// page
+	UniMasterPage* _masterPage{ nullptr };
+	UniLogPage* _logPage{ nullptr };
+	UniSettingPage* _settingPage{ nullptr };
 
 	// 模拟触发
 	ElaMultiSelectComboBox* _selectCameras{ nullptr };
