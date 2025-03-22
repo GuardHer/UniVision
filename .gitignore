@@ -33,7 +33,7 @@
 # custom
 *.pdb
 .vs
-CUDA
+
 x64
 build
 mmcv_train
